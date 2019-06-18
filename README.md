@@ -1,2 +1,4 @@
 # MGVO-API
-Homepage API für MGVO
+Homepage API for MGVO.
+
+See https://www.mgvo.info
