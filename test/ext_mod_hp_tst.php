@@ -89,8 +89,6 @@
    }
    echo "</table><br>";
    
-   */
-   
    // Liest aller Betreuer
    
    $resar = $hp1->read_betreuer();
@@ -108,8 +106,24 @@
       echo "</tr>";
    }
    echo "</table><br>";
+   */
    
+   // Liest alle Abteilungen
    
+   $glob_debug = 0;
+   $resar = $hp1->read_abt();
+   echo "<table cellpadding=2 cellspacing=0 border=1>";
+   echo "<tr>";
+   echo "<th>Abteilungs-ID</th>";
+   echo "<th>Name</th>";
+   echo "</tr>";
+   foreach($resar['objar'] as $or) {
+      echo "<tr>";
+      echo "<td>$or[abtid]</td>";
+      echo "<td>$or[abtbez]</td>";
+      echo "</tr>";
+   }
+   echo "</table><br>";
    
    echo "</center></body></html>";
 ?>

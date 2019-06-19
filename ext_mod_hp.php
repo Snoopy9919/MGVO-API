@@ -94,7 +94,9 @@
          $this->headline = $rootar['headline'];
          $this->verein = $rootar['verein'];
          $this->version = $rootar['version'];
-         $this->objar = $this->tab[$rootname][$objname];
+         $object = $this->tab[$rootname][$objname];
+         if (!isset($object[0])) $this->objar[0] = $object;
+         else $this->objar = $object;
          $ergar['headline'] = $this->headline;
          $ergar['verein'] = $this->verein;
          $ergar['version'] = $this->version;
@@ -153,6 +155,16 @@
          $url = "$this->urlroot/pub_gruppen_xml.php?$paras";
          $this->tab = $this->xml2table($url,$paras);
          $ergar = $this->create_ergar("reservelist","cancellation");
+         return $ergar;
+      }
+      
+      function read_abt() {
+         $this->cacheon = 1;
+         $vars['call_id'] = $this->call_id;
+         $paras = http_build_query($vars);
+         $url = "$this->urlroot/pub_abt_xml.php?$paras";
+         $this->tab = $this->xml2table($url,$paras);
+         $ergar = $this->create_ergar("abtlist","abteilung");
          return $ergar;
       }
       
