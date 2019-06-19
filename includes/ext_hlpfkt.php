@@ -1,5 +1,7 @@
 <?php
 
+   // Hilfsfunktionen 
+
    function localecho($ipadr,$out,...$vp) {
       $t = $vp[0];
       if ($_ENV['REMOTE_ADDR'] == $ipadr) {
@@ -74,6 +76,14 @@
       curl_close($ch);
       if ($glob_debug) echo "Returnwert: $result<br><br>";
       return $result;
+   }
+   
+   function calc_fingerprint($pis) {
+      $fps = $_SERVER['HTTP_USER_AGENT'];
+      $fps .= $_SERVER['HTTP_ACCEPT'];
+      $fps .= $pis;
+      $hv = hash("sha256",$fps);
+      return $hv;
    }
    
 ?>

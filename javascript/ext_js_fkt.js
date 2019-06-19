@@ -1,4 +1,5 @@
 <script language=javascript>
+
 function get_browserpis() {
    var i,pis;
    for(i=0;i < navigator.plugins.length;i++) {
@@ -6,4 +7,5 @@ function get_browserpis() {
    }
    return pis;
 }
+
 </script>

@@ -4,14 +4,23 @@
    
    $glob_debug = 0;
    
-   $call_id = "9a052167eb8a71f51b686e35c18a665a";  // Demoverein
-   $vcryptkey = "f4jd8Nzhfr4f8tbhkHGZ765VGVujg";
+   // call_id zur Identifikation des Vereins (hier: Demoverein)
+   $call_id = "9a052167eb8a71f51b686e35c18a665a";
+   // Symetrischer Schlüssel, muss identisch sein mit dem Schlüssel, der in den technischen Parametern abgelegt wird.
+   $vcryptkey = "f4jd8Nzhfr4f8tbhkHGZ765VGVujg";   
    
    echo "<html><body<><center>";
    
-   $hp1 = new MGVO_HPAPI($call_id,$vcryptkey,0);
    
-   /* $selparar['suchbeg'] = "h*";
+   // Instanziierung der Klasse MGVO_HPAPI
+   // Der dritte Parameter sollte unbedingt im Produktivbetrieb auf 5 (Minuten) oder höher eingestellt werden.
+   
+   $hp1 = new MGVO_HPAPI($call_id,$vcryptkey,0);  
+   
+   /*
+   // Suchen von Mitgliedern
+   
+   $selparar['suchbeg'] = "h*";
    $resar = $hp1->sel_mitglieder($selparar);
    
    echo "<table cellpadding=2 cellspacing=0 border=1>";
@@ -38,10 +47,14 @@
    }
    echo "</table><br>";
    
-   $mr = $hp1->show_mitglied(12);    // Aufruf der Daten eines einzelnen Mitglieds.
+   // Aufruf der Daten eines einzelnen Mitglieds.
+   
+   $mr = $hp1->show_mitglied(12);
    print_ar($mr);
    
-   $resar = $hp1->list_documents();  // Liest alle öffentlichen Dokumente und listet sie auf
+   // Liest alle öffentlichen Dokumente und listet sie auf
+   
+   $resar = $hp1->list_documents();  
    
    echo "<table cellpadding=2 cellspacing=0 border=1>";
    echo "<tr>";
@@ -58,7 +71,9 @@
       echo "<td>$dokr[fsize]</td>";
       echo "</tr>";
    }
-   echo "</table><br>"; */
+   echo "</table><br>";
+   
+   // Liest alle definierten Orte
    
    $resar = $hp1->read_orte();
    echo "<table cellpadding=2 cellspacing=0 border=1>";
@@ -73,5 +88,28 @@
       echo "</tr>";
    }
    echo "</table><br>";
+   
+   */
+   
+   // Liest aller Betreuer
+   
+   $resar = $hp1->read_betreuer();
+   echo "<table cellpadding=2 cellspacing=0 border=1>";
+   echo "<tr>";
+   echo "<th>Trainer-ID</th>";
+   echo "<th>Name</th>";
+   echo "<th>Stra&slige</th>";
+   echo "</tr>";
+   foreach($resar['objar'] as $or) {
+      echo "<tr>";
+      echo "<td>$or[trid]</td>";
+      echo "<td>$or[nachname], $or[vorname]</td>";
+      echo "<td>$or[str]</td>";
+      echo "</tr>";
+   }
+   echo "</table><br>";
+   
+   
+   
    echo "</center></body></html>";
 ?>

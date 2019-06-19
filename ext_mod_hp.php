@@ -41,6 +41,7 @@
          }
          if (empty($ret)) {
             $ret = http_get($url);
+            if ($glob_debug) echo "$ret<br>";
             if ($this->cachetime > 0) file_put_contents($fn,$ret);
          }
          return $ret;
@@ -124,6 +125,16 @@
          return $ergar;
       }
       
+      function read_betreuer() {
+         $this->cacheon = 1;
+         $vars['call_id'] = $this->call_id;
+         $paras = http_build_query($vars);
+         $url = "$this->urlroot/pub_trainer_xml.php?$paras";
+         $this->tab = $this->xml2table($url,$paras);
+         $ergar = $this->create_ergar("betreuerlist","betreuer");
+         return $ergar;
+      }
+      
       function read_events() {
          // Liest die öffentlichen Veranstaltungen
          $this->cacheon = 1;
@@ -156,6 +167,7 @@
       }
       
       function sel_mitglieder($selparar) {
+         // Selektion von Mitgliedern. 
          $cipher = new Cipher();                         // Initialisierung der Verschlüsselung
          $cipher->init($this->vcryptkey);
          
@@ -179,6 +191,7 @@
       }
       
       function list_documents(...$vp) {
+         // dokart: Es werden nur Dokumente dieser Dokumentart aufgelistet
          $dokart = $vp[0];
          $this->cacheon = 1;
          $vars['call_id'] = $this->call_id;
@@ -190,12 +203,29 @@
          return $ergar;
       }
       
-      function login($email_id,$passwd) {
+      function login($email_id,$passwd,$pis,$smscode) {
+         // Die Methode hat folgende Returncodes:
+         // 0  : Passwort nicht in Ordnung / User nicht vorhanden
+         // 1  : Login ok
+         // 10 : PIS nicht gefüllt
+         // 11 : Max. Logon-Versuche überschritten
+         // 12 : Geheimcode generiert und an Mobilgerät versendet, Logon muss mit Code erfolgen
+         // 13 : Geheimcode (SMS-Code) stimmt nicht überein
+         
+         // Der Personal Identity String (PIS) wird durch Aufruf der Javascript-Funktion "get_browserpis"
+         // erzeugt und muss an den Login übergeben werden, wenn eine Zwei-Faktor-Authentifizierung genutzt werden soll.
+        
          $this->cacheon = 0;
          $vars['call_id'] = $this->call_id;
          $vars['email_id'] = $email_id;
          $vars['passwd'] = $passwd;
+         $vars['pis'] = $pis;
+         $vars['smscode'] = $smscode;
+         $paras = http_build_query($vars);
          $url = "$this->urlroot/pub_mgb_validate.php?$paras";
+         $ret = http_get($url);
+         $retcode = (int) $ret;
+         return $retcode;
       }
       
    }
