@@ -21,7 +21,7 @@
    // Suchen von Mitgliedern
    
    $selparar['suchbeg'] = "h*";
-   $resar = $hp1->sel_mitglieder($selparar);
+   $resar = $hp1->read_mitglieder($selparar);
    
    echo "<table cellpadding=2 cellspacing=0 border=1>";
    echo "<tr>";

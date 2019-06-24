@@ -19,6 +19,7 @@
       function __construct($call_id,...$vp) {
          // call_id: call_id des Vereins
          // vcryptkey: Schlüssel für die synchrone Verschlüsselung. Wird in MGVO in den technischen Parametern eingetragen 
+         // cachetime: Legt die Cachezeit in Minuten fest. Wenn nicht angegeben, werden 5 Minuten gesetzt
          $this->call_id = $call_id;
          $this->vcryptkey = $vp[0];
          $cachemin = isset($vp[1]) ? $vp[1] : 5;
@@ -159,6 +160,7 @@
       }
       
       function read_abt() {
+         // Liest die Abteilungen
          $this->cacheon = 1;
          $vars['call_id'] = $this->call_id;
          $paras = http_build_query($vars);
@@ -169,6 +171,7 @@
       }
       
       function read_training_fail() {
+         // Liest die Trainingsausfallzeiten
          $this->cacheon = 1;
          $vars['call_id'] = $this->call_id;
          $paras = http_build_query($vars);
@@ -178,7 +181,7 @@
          return $ergar;
       }
       
-      function sel_mitglieder($selparar) {
+      function read_mitglieder($selparar) {
          // Selektion von Mitgliedern. 
          $cipher = new Cipher();                         // Initialisierung der Verschlüsselung
          $cipher->init($this->vcryptkey);
@@ -197,7 +200,7 @@
       
       function show_mitglied($mgnr) {
          $selparar['suchbeg'] = $mgnr;
-         $this->sel_mitglieder($selparar);
+         $this->read_mitglieder($selparar);
          $mr = $this->objar;
          return $mr;
       }
