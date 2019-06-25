@@ -9,7 +9,7 @@
    // Symetrischer Schlüssel, muss identisch sein mit dem Schlüssel, der in den technischen Parametern abgelegt wird.
    $vcryptkey = "f4jd8Nzhfr4f8tbhkHGZ765VGVujg";   
    
-   echo "<html><body<><center>";
+   // echo "<html><body<><center>";
    
    
    // Instanziierung der Klasse MGVO_HPAPI
@@ -106,11 +106,9 @@
       echo "</tr>";
    }
    echo "</table><br>";
-   */
    
    // Liest alle Abteilungen
    
-   $glob_debug = 0;
    $resar = $hp1->read_abt();
    echo "<table cellpadding=2 cellspacing=0 border=1>";
    echo "<tr>";
@@ -124,6 +122,21 @@
       echo "</tr>";
    }
    echo "</table><br>";
+   */
    
-   echo "</center></body></html>";
+   $resar = $hp1->get_mitpict(17);
+   
+   $mpr = $resar['objar'][0];
+   $dokname = $mpr['dokname'];
+   $fsize = $mpr['fsize'];
+   $ctype = $mpr['mimetype'];
+   $content = base64_decode($mpr['content']);
+   
+   header("Content-Type: $ctype");
+   header("Content-Length: " . strlen($content));
+   header("Content-disposition: inline; filename=\"$dokname\"");
+   
+   echo $content;
+   
+   // echo "</center></body></html>";
 ?>

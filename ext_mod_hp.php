@@ -31,6 +31,7 @@
          // Die Funktion holt die Daten per https und legt sie als Datei auf dem lokalen Dateisystem ab.
          // Beim Initiieren der MGVO-Klasse kann die Cachedauer festgelegt werden. Sie wird ohne explizite Angabe 
          // auf fünf Minuten festgelegt.
+         global $glob_debug;
          $urlinfo = parse_url($url);
          $fi = pathinfo($urlinfo['path']);
          $fn = $fi['filename'].".".$paras.".cache";
@@ -49,12 +50,13 @@
       }
       
       function xml2subtab($xml,$exElar) {
+         $icnt = array();
          while($xml->read()) {
             switch($xml->nodeType) {
                case XMLReader::ELEMENT:
                   if (isset($exElar) && in_array($xml->name,$exElar)) continue 2;
                   if ($icnt[$xml->name] > 0) {
-                     if ($icnt[$xml->name] == 1) {  // Umhängen Knoten als Array
+                     if ($icnt[$xml->name] == 1) {                       // Umhängen Knoten als Array
                         $oldval = $node[$xml->name];
                         unset ($node[$xml->name]);
                         $node[$xml->name][] = $oldval;
@@ -205,8 +207,28 @@
          return $mr;
       }
       
+      function get_mitpict($mgnr) {
+         // mgnr: Mitgliedsnummer
+         // Liefert das Passbild eines Mitglieds inklusive mimetype und fsize (Dateigröße).
+         // Das eigentliche Bild ist base64 codiert.
+         $cipher = new Cipher();                         // Initialisierung der Verschlüsselung
+         $cipher->init($this->vcryptkey);
+         
+         $this->cacheon = 1;
+         $vars['call_id'] = $this->call_id;         // Zusammenstellung der Parameter call_id verschlüsselt
+         $vars['mgnr'] = $mgnr;
+         $suchparas = http_build_query($vars);      // Parameterstring zusammensetzen
+         $cparas = $cipher->encrypt($suchparas);        // verschlüsseln
+         $cpe = rawurlencode($cparas);
+         
+         $url = "$this->urlroot/pub_mitpict_xml.php?paras=$cpe&call_id=$this->call_id";
+         $this->tab = $this->xml2table($url,$paras);
+         $ergar = $this->create_ergar("mitpassbild","bilddaten");
+         return $ergar;
+      }
+      
       function list_documents(...$vp) {
-         // dokart: Es werden nur Dokumente dieser Dokumentart aufgelistet
+         // dokart: Es werden öffentliche Dokumente der spezifizierten Dokumentart aufgelistet
          $dokart = $vp[0];
          $this->cacheon = 1;
          $vars['call_id'] = $this->call_id;
@@ -214,7 +236,7 @@
          $paras = http_build_query($vars);
          $url = "$this->urlroot/pub_documents_xml.php?$paras";
          $this->tab = $this->xml2table($url,$paras);
-         $ergar = $this->create_ergar("documentlist","document","mgar");
+         $ergar = $this->create_ergar("documentlist","document");
          return $ergar;
       }
       
