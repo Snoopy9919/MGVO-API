@@ -1,6 +1,6 @@
 <?php
 
-   require("../ext_mod_hp.php");
+   require("../mgvo_sniplets.php");
    
    $glob_debug = 0;
    
@@ -9,15 +9,16 @@
    // Symetrischer Schlüssel, muss identisch sein mit dem Schlüssel, der in den technischen Parametern abgelegt wird.
    $vcryptkey = "f4jd8Nzhfr4f8tbhkHGZ765VGVujg";   
    
-   echo "<html><body><center>";
-
-   // Instanziierung der Klasse MGVO_HPAPI
+   echo "<html><body>";
+   
+   // Instanziierung der Klasse MGVO_SNIPLET
    // Der dritte Parameter sollte unbedingt im Produktivbetrieb auf 5 (Minuten) oder höher eingestellt werden.
    
-   $hp1 = new MGVO_HPAPI($call_id,$vcryptkey,0);
+   $msc = new MGVO_SNIPLET($call_id,$vcryptkey,0);  
    
-   $resar = $hp1->read_vkal(3,2019);
-   print_ar($resar);
+   $selparaar['suchbeg'] = "leu*";
+   $html = $msc->mgvo_sniplet_read_mitglieder($selparaar);
    
+   echo "<center>$html";
    echo "</center></body></html>";
 ?>

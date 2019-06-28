@@ -50,13 +50,12 @@
       }
       
       function xml2subtab($xml,$exElar) {
-         $icnt = array();
          while($xml->read()) {
             switch($xml->nodeType) {
                case XMLReader::ELEMENT:
                   if (isset($exElar) && in_array($xml->name,$exElar)) continue 2;
                   if ($icnt[$xml->name] > 0) {
-                     if ($icnt[$xml->name] == 1) {                       // Umhängen Knoten als Array
+                     if ($icnt[$xml->name] == 1) {  // Umhängen Knoten als Array
                         $oldval = $node[$xml->name];
                         unset ($node[$xml->name]);
                         $node[$xml->name][] = $oldval;
@@ -80,7 +79,7 @@
       }
          
       function xml2table($url,$paras,...$vp) {
-         $exElar = $vp[0];
+         $exElar = isset($vp[0]) ? $vp[0] : NULL;
          $ret = $this->http_get_cached($url,$paras);
          $xml = new XMLReader();
          if ($xml->xml($ret) === false) return false;
@@ -93,11 +92,11 @@
       }
       
       function create_ergar($rootname,$objname) {
-         $rootar = $this->tab[$rootname];
-         $this->headline = $rootar['headline'];
-         $this->verein = $rootar['verein'];
-         $this->version = $rootar['version'];
-         $object = $this->tab[$rootname][$objname];
+         $rootar = isset($this->tab[$rootname]) ? $this->tab[$rootname] : array();
+         $this->headline = isset($rootar['headline']) ? $rootar['headline'] : "";
+         $this->verein = isset($rootar['verein']) ? $rootar['verein'] : "";
+         $this->version = isset($rootar['version']) ? $rootar['version'] : "";
+         $object = isset($this->tab[$rootname][$objname]) ? $this->tab[$rootname][$objname] : NULL;
          if (!isset($object[0])) $this->objar[0] = $object;
          else $this->objar = $object;
          $ergar['headline'] = $this->headline;
@@ -147,7 +146,7 @@
          $paras = http_build_query($vars);
          $url = "$this->urlroot/pub_events_xml.php?$paras";
          $this->tab = $this->xml2table($url,$paras);
-         $ergar = $this->create_ergar("events","event");
+         $ergar = $this->create_ergar("eventlist","event");
          return $ergar;
       }
       
@@ -157,7 +156,7 @@
          $paras = http_build_query($vars);
          $url = "$this->urlroot/pub_gruppen_xml.php?$paras";
          $this->tab = $this->xml2table($url,$paras);
-         $ergar = $this->create_ergar("reservelist","cancellation");
+         $ergar = $this->create_ergar("grouplist","group");
          return $ergar;
       }
       
@@ -184,7 +183,22 @@
       }
       
       function read_mitglieder($selparar) {
-         // Selektion von Mitgliedern. 
+         // Selektion von Mitgliedern.
+         // Das Array selparar umfasst eine Auswahl aus folgenden Selektionsfelder der Mitgliedermaske
+         // Allgemeiner Suchbegriff: suchbeg
+         // Suchalter/Geburtsdatum: suchalterv - suchalterb
+         // Austritt: suchaustrittv - suchaustrittb
+         // Gruppen-ID: suchgruid
+         // Beitragsgruppe: suchbeigru
+         // Lastschriftzahler: lssel (Selektionswert: 1)
+         // Barzahler/Überweiser: barsel (Selektionswert: 1)
+         // Dauerauftrag: dasel (Selektionswert: 1)
+         // Geschlecht: geschl (x,m,w)
+         // Mitglied: ausgetr (x,m,a)
+         // Aktiv/Passiv: aktpass (x,a,p)
+         // Mailempfänger: mailempf (x,e,s)
+         // Inland/Ausland: (x,i,a)
+         // Mahnstufe: (a,1,2,3)
          $cipher = new Cipher();                         // Initialisierung der Verschlüsselung
          $cipher->init($this->vcryptkey);
          
@@ -229,7 +243,7 @@
       
       function list_documents(...$vp) {
          // dokart: Es werden öffentliche Dokumente der spezifizierten Dokumentart aufgelistet
-         $dokart = $vp[0];
+         $dokart = isset($vp[0]) ? $vp[0] : "";
          $this->cacheon = 1;
          $vars['call_id'] = $this->call_id;
          $vars['dokart'] = $dokart;

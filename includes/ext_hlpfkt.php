@@ -33,8 +33,8 @@
    }
    
    function http_get($url,...$vp) {
-      $auth = $vp[0];
-      $optar = $vp[1];
+      $auth = isset($vp[0]) ? $vp[0] : "";
+      $optar = isset($vp[1]) ? $vp[1] : array();
       global $glob_debug,$glob_curlerror_no,$glob_curlerror_msg;
       if ($glob_debug) {
          echo "</center>";
@@ -84,6 +84,43 @@
       $fps .= $pis;
       $hv = hash("sha256",$fps);
       return $hv;
+   }
+   
+   function date2user($db_datum,...$vp) {
+      $typ = empty($vp[0]) ? 1 : $vp[0];
+      if ($db_datum == "" || $db_datum == "0000-00-00") return "";
+      $year = substr($db_datum,0,4);
+      $syear = substr($db_datum,2,2);
+      $month = substr($db_datum,5,2);
+      $day = substr ($db_datum,8,2);
+      $datum = "";
+      switch ($typ) {
+         case 1:
+            $datum .= "$day.$month.$year";  // 03.07.2005
+            break;
+         case 3:
+            $datum .= "$day.$month.$syear"; // 03.07.05
+            break;
+         case 4:
+            $datum .= "$day.$month.";  // 03.07.
+            break;
+         case 5:
+            $day = (int) $day;        // 3.7.
+            $month = (int) $month;
+            $datum .= "$day.$month.";
+            break;
+         case 6:
+            $day = (int) $day;        // 3.7.2005
+            $month = (int) $month;
+            $datum .= "$day.$month.$year";
+            break;
+         case 7:
+            $day = (int) $day;        // 3.7.05
+            $month = (int) $month;
+            $datum .= "$day.$month.$syear";
+            break;
+      }
+      return $datum;
    }
    
 ?>
