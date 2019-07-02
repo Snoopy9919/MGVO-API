@@ -1,13 +1,13 @@
 <?php
 
-   require("../mgvo_sniplets.php");
+   require("../mgvo_sniplets.php");   
    
-   $glob_debug = 0;
+   $mgvo_debug = 0; // MGVO_DEBUG_ERR | MGVO_DEBUG_DATA | MGVO_DEBUG_XMLTRANS;
    
    // call_id zur Identifikation des Vereins (hier: Demoverein)
    $call_id = "9a052167eb8a71f51b686e35c18a665a";
    // Symetrischer Schlüssel, muss identisch sein mit dem Schlüssel, der in den technischen Parametern abgelegt wird.
-   $vcryptkey = "f4jd8Nzhfr4f8tbhkHGZ765VGVujg";   
+   $vcryptkey = "f4jd8Nzhfr4f8tbhkHGZ765VGVujg";
    
    echo "<html><body>";
    
@@ -16,8 +16,7 @@
    
    $msc = new MGVO_SNIPLET($call_id,$vcryptkey,0);  
    
-   $selparaar['suchbeg'] = "leu*";
-   $html = $msc->mgvo_sniplet_read_mitglieder($selparaar);
+   $html = $msc->mgvo_sniplet_gruppen();
    
    echo "<center>$html";
    echo "</center></body></html>";

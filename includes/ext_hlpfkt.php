@@ -1,6 +1,30 @@
 <?php
 
    // Hilfsfunktionen 
+   
+   // Werte für mgvo_debug:
+   define(MGVO_DEBUG_ERR,1);         // Allg. Fehlerausgaben
+   define(MGVO_DEBUG_DATA,2);        // XML-Ergebnis vom Aufruf
+   define(MGVO_DEBUG_XML,4);         // Array nach XML-Konvertierung
+   define(MGVO_DEBUG_XMLTRANS,8);    // Schritte der XML-Konvertierung
+   define(MGVO_DEBUG_ERG,16);        // Ergebnisarray vor Übergabe an Sniplet-Funktionen
+
+   function mgvo_log($comment,$lv,$dtyp) {
+      global $mgvo_debug;
+      if (($dtyp & $mgvo_debug) > 0) {
+         if (!empty($comment) && is_string($lv) && !empty($lv)) {
+            $txt = "$comment: $lv";
+            error_log($txt);
+         }
+         else {
+            if (!empty($comment)) error_log($comment);
+            if (!empty($lv)) {
+               $ret = print_r($lv,1);
+               error_log($ret);
+            }
+         }
+      }
+   }
 
    function localecho($ipadr,$out,...$vp) {
       $t = $vp[0];
@@ -10,6 +34,12 @@
       }
       flush();
       if (!empty($t)) sleep($t);
+   }
+   
+   function vp_assign($vp,$varlist) {
+      $varar = explode(",",$varlist);
+      foreach($varar as $i => $vn) $valar[$vn] = isset($vp[$i]) ? $vp[$i] : NULL;
+      return $valar;
    }
 
    function utf8_dec($str) {
@@ -33,8 +63,7 @@
    }
    
    function http_get($url,...$vp) {
-      $auth = isset($vp[0]) ? $vp[0] : "";
-      $optar = isset($vp[1]) ? $vp[1] : array();
+      extract(vp_assign($vp,"auth,optar"));
       global $glob_debug,$glob_curlerror_no,$glob_curlerror_msg;
       if ($glob_debug) {
          echo "</center>";

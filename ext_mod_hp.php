@@ -17,12 +17,12 @@
       private $objar;
             
       function __construct($call_id,...$vp) {
+         extract(vp_assign($vp,"vcryptkey,cachemin"));
          // call_id: call_id des Vereins
          // vcryptkey: Schlüssel für die synchrone Verschlüsselung. Wird in MGVO in den technischen Parametern eingetragen 
          // cachetime: Legt die Cachezeit in Minuten fest. Wenn nicht angegeben, werden 5 Minuten gesetzt
          $this->call_id = $call_id;
-         $this->vcryptkey = $vp[0];
-         $cachemin = isset($vp[1]) ? $vp[1] : 5;
+         $cachemin = isset($cachemin) ? $cachemin : 5;
          $this->cachetime = $cachemin * 60;                // cachetime in Sekunden
          $this->urlroot = "https://www.mgvo.de/prog";
       }
@@ -31,7 +31,6 @@
          // Die Funktion holt die Daten per https und legt sie als Datei auf dem lokalen Dateisystem ab.
          // Beim Initiieren der MGVO-Klasse kann die Cachedauer festgelegt werden. Sie wird ohne explizite Angabe 
          // auf fünf Minuten festgelegt.
-         global $glob_debug;
          $urlinfo = parse_url($url);
          $fi = pathinfo($urlinfo['path']);
          $fn = $fi['filename'].".".$paras.".cache";
@@ -43,7 +42,7 @@
          }
          if (empty($ret)) {
             $ret = http_get($url);
-            if ($glob_debug) echo "$ret<br>";
+            mgvo_log("XML-Returnstring",$ret,MGVO_DEBUG_DATA);
             if ($this->cachetime > 0) file_put_contents($fn,$ret);
          }
          return $ret;
@@ -53,8 +52,9 @@
          while($xml->read()) {
             switch($xml->nodeType) {
                case XMLReader::ELEMENT:
+                  mgvo_log("Element",$xml->name,MGVO_DEBUG_XMLTRANS);
                   if (isset($exElar) && in_array($xml->name,$exElar)) continue 2;
-                  if ($icnt[$xml->name] > 0) {
+                  if (isset($icnt[$xml->name]) && $icnt[$xml->name] > 0) {
                      if ($icnt[$xml->name] == 1) {  // Umhängen Knoten als Array
                         $oldval = $node[$xml->name];
                         unset ($node[$xml->name]);
@@ -70,24 +70,31 @@
                   break;
                case XMLReader::TEXT:
                case XMLReader::CDATA:
+                  mgvo_log("Textelement",$xml->value,MGVO_DEBUG_XMLTRANS);
                   $node = $xml->value;
                   break;
                case XMLReader::END_ELEMENT:
+               mgvo_log("Endeelement","",MGVO_DEBUG_XMLTRANS);
                   return $node;
             }
          }
       }
          
       function xml2table($url,$paras,...$vp) {
-         $exElar = isset($vp[0]) ? $vp[0] : NULL;
+         extract(vp_assign($vp,"exElar"));
          $ret = $this->http_get_cached($url,$paras);
          $xml = new XMLReader();
-         if ($xml->xml($ret) === false) return false;
+         if ($xml->xml($ret) === false) {
+            mgvo_log("kein XML-Code",NULL,MGVO_DEBUG_ERR);
+            return false;
+         }
          do {
             $xml->read();
          } while ($xml->nodeType != XMLReader::ELEMENT);
+         mgvo_log("Wurzelelement",$xml->name,MGVO_DEBUG_XMLTRANS);
          if ($xml->nodeType == XMLReader::ELEMENT) $tab[$xml->name] = $this->xml2subtab($xml,$exElar);
          $xml->close();
+         mgvo_log("Aus XML erzeugte Tabelle",$tab,MGVO_DEBUG_XML);
          return $tab;
       }
       
@@ -103,6 +110,7 @@
          $ergar['verein'] = $this->verein;
          $ergar['version'] = $this->version;
          $ergar['objar'] = $this->objar;
+         mgvo_log("Ergebnistabelle",$ergar,MGVO_DEBUG_ERG);
          return $ergar;
       }
       
@@ -242,8 +250,8 @@
       }
       
       function list_documents(...$vp) {
+         extract(vp_assign($vp,"dokart"));
          // dokart: Es werden öffentliche Dokumente der spezifizierten Dokumentart aufgelistet
-         $dokart = isset($vp[0]) ? $vp[0] : "";
          $this->cacheon = 1;
          $vars['call_id'] = $this->call_id;
          $vars['dokart'] = $dokart;

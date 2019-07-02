@@ -4,24 +4,36 @@
    // aufruft und zu den jeweiligen Daten HTML-Code zur Ausgabe der Daten generiert.
    // Die Klasse repräsentiert Beispielcode und muss den individuellen Anforderungen angepasst werden.
 
-   require_once("../ext_mod_hp.php");
+   require_once(dirname(__FILE__)."/ext_mod_hp.php");
    
    class MGVO_SNIPLET {
       private $api;
+      private $headline;
       
       function __construct($call_id,$vcryptkey,$cachemin) {
          // call_id: call_id des Vereins
          // vcryptkey: Schlüssel für die synchrone Verschlüsselung. Wird in MGVO in den technischen Parametern eingetragen 
          // $vcryptkey = $vp[0];
          // $cachemin = isset($vp[1]) ? $vp[1] : 5;
-         $this->api = new MGVO_HPAPI($call_id, $vcryptkey, $cachemin);
+         $this->api = new MGVO_HPAPI($call_id,$vcryptkey,$cachemin);
+      }
+      
+      function set_headline($headline) {
+         $this->headline = $headline;
+      }
+      
+      function write_headline($mgvo_headline) {
+         $headline = empty($this->headline) ? $mgvo_headline : $this->headline;
+         $sniplet = "<h2>$headline</h2>";
+         return $sniplet;
       }
       
       function mgvo_sniplet_vkal($vkalnr,$seljahr) {
          // Liest den Vereinskalender mit Nr. vkalnr mit Terminen des Jahres seljahr
          $resar = $this->api->read_vkal($vkalnr,$seljahr);
       
-         $sniplet = "<div>";
+         $sniplet = "<div class='mgvo mgvo-vkal'>";
+         $sniplet .= $this->write_headline($resar['headline']);
          $sniplet .= "<table cellpadding=1 cellspacing=0 border=1>";
          $sniplet .= "<tr>";
          $sniplet .= "<th>Bezeichnung</th>";
@@ -50,7 +62,8 @@
          // Liest die Ortsliete ein
          $resar = $this->api->read_orte();
        
-         $sniplet = "<div>";
+         $sniplet = "<div class='mgvo mgvo-orte'>";
+         $sniplet .= $this->write_headline($resar['headline']);
          $sniplet .= "<table cellpadding=2 cellspacing=0 border=1>";
          $sniplet .= "<tr>";
          $sniplet .= "<th>Orts-ID</th>";
@@ -71,7 +84,8 @@
          // Liest die Betreuer ein
          $resar = $this->api->read_betreuer();
          
-         $sniplet = "<div>";
+         $sniplet = "<div class='mgvo mgvo-betreuer'>";
+         $sniplet .= $this->write_headline($resar['headline']);
          $sniplet .= "<table cellpadding=2 cellspacing=0 border=1>";
          $sniplet .= "<tr>";
          $sniplet .= "<th>Trainer-ID</th>";
@@ -94,7 +108,8 @@
          // Liest die öffentlichen Veranstaltungen
          $resar = $this->api->read_events();
        
-         $sniplet = "<div>";
+         $sniplet = "<div class='mgvo mgvo-events'>";
+         $sniplet .= $this->write_headline($resar['headline']);
          $sniplet .= "<table cellpadding=2 cellspacing=0 border=1>";
          $sniplet .= "<tr>";
          $sniplet .= "<th>Event</th>";
@@ -125,7 +140,8 @@
       function mgvo_sniplet_gruppen() { 
          $resar = $this->api->read_gruppen();
        
-         $sniplet = "<div>";
+         $sniplet = "<div class='mgvo mgvo-gruppen'>";
+         $sniplet .= $this->write_headline($resar['headline']);
          $sniplet .= "<table cellpadding=2 cellspacing=0 border=1>";
          $sniplet .= "<tr>";
          $sniplet .= "<th>Gruppen-ID</th>";
@@ -148,7 +164,8 @@
       function mgvo_sniplet_abteilungen() {
          $resar = $this->api->read_abt();
        
-         $sniplet = "<div>";
+         $sniplet = "<div class='mgvo mgvo-abteilungen'>";
+         $sniplet .= $this->write_headline($resar['headline']);
          $sniplet .= "<table cellpadding=2 cellspacing=0 border=1>";
          $sniplet .= "<tr>";
          $sniplet .= "<th>Abteilungs-ID</th>";
@@ -167,10 +184,12 @@
       }
       
       function mgvo_sniplet_training_fail() {
-        $resar = $this->api->read_training_fail();
+         $resar = $this->api->read_training_fail();
        
-       //  Hier sollte der Code stehen, der aus den Ergebnis eine HTML-Struktur macht
-       $sniplet = "<div class='mgvo mgvo-sniplet mgvo-gruppen'> Test Veranstaltungsausgabe</div>";
+         //  Hier sollte der Code stehen, der aus den Ergebnis eine HTML-Struktur macht
+         $sniplet = "<div class='mgvo mgvo-trainingfail'>";
+         $sniplet .= "";
+         $sniplet .= "</div>";
  
          return $sniplet;
       }
@@ -178,7 +197,8 @@
       function mgvo_sniplet_read_mitglieder($selparar) {
          // Selektion von Mitgliedern. 
          $resar = $this->api->read_mitglieder($selparar);
-         $sniplet = "<div>";
+         $sniplet = "<div class='mgvo mgvo-mitglieder'>";
+         $sniplet .= $this->write_headline($resar['headline']);
          $sniplet .= "<table cellpadding=2 cellspacing=0 border=1>";
          $sniplet .= "<tr>";
          $sniplet .= "<th>MgNr.</th>";
@@ -208,7 +228,8 @@
       
       function mgvo_sniplet_show_mitglied($mgnr) {
          $mr = $this->api->show_mitglied($mgnr);
-         $sniplet = "<div>";
+         $sniplet = "<div class='mgvo mgvo-mitglieder'>";
+         $sniplet .= $this->write_headline($resar['headline']);
          $sniplet .= "<table cellpadding=2 cellspacing=0 border=1>";
          foreach($mr as $fieldname => $value) {
             $sniplet .= "<tr><td>$fieldname:</td><td>$value</td></th>";
@@ -220,7 +241,8 @@
       
       function mgvo_sniplet_list_documents($dokart) {
          $resar = $this->api->list_documents($dokart);
-         $sniplet = "<div>";
+         $sniplet = "<div class='mgvo mgvo-documents'>";
+         $sniplet .= $this->write_headline($resar['headline']);
          $sniplet .= "<table cellpadding=2 cellspacing=0 border=1>";
          $sniplet .= "<tr>";
          $sniplet .= "<th>DokNr.</th>";
