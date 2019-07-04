@@ -99,17 +99,25 @@
       }
       
       function create_ergar($rootname,$objname) {
-         $rootar = isset($this->tab[$rootname]) ? $this->tab[$rootname] : array();
-         $this->headline = isset($rootar['headline']) ? $rootar['headline'] : "";
-         $this->verein = isset($rootar['verein']) ? $rootar['verein'] : "";
-         $this->version = isset($rootar['version']) ? $rootar['version'] : "";
+         $rootar = saveassign($this->tab,$rootname,array());
+         $this->headline = saveassign($rootar,"headline","");
+         $this->verein = saveassign($rootar,"verein","");
+         $this->version = saveassign($rootar,"version","");
+         $this->objfieldlist = saveassign($rootar,"objfieldlist","");
          $object = isset($this->tab[$rootname][$objname]) ? $this->tab[$rootname][$objname] : NULL;
          if (!isset($object[0])) $this->objar[0] = $object;
          else $this->objar = $object;
+         $fldar = explode(",",$this->objfieldlist);
+         foreach($this->objar as $objr) {
+            foreach($fldar as $fld) {
+               $zr[$fld] = isset($objr[$fld]) ? $objr[$fld] : "";
+            }
+            $zar[] = $zr;
+         }
          $ergar['headline'] = $this->headline;
          $ergar['verein'] = $this->verein;
          $ergar['version'] = $this->version;
-         $ergar['objar'] = $this->objar;
+         $ergar['objar'] = $zar;
          mgvo_log("Ergebnistabelle",$ergar,MGVO_DEBUG_ERG);
          return $ergar;
       }

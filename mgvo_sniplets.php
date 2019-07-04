@@ -7,7 +7,7 @@
    require_once(dirname(__FILE__)."/ext_mod_hp.php");
    
    class MGVO_SNIPLET {
-      private $api;
+      public $api;
       private $headline;
       
       function __construct($call_id,$vcryptkey,$cachemin) {

@@ -3,11 +3,11 @@
    // Hilfsfunktionen 
    
    // Werte für mgvo_debug:
-   define(MGVO_DEBUG_ERR,1);         // Allg. Fehlerausgaben
-   define(MGVO_DEBUG_DATA,2);        // XML-Ergebnis vom Aufruf
-   define(MGVO_DEBUG_XML,4);         // Array nach XML-Konvertierung
-   define(MGVO_DEBUG_XMLTRANS,8);    // Schritte der XML-Konvertierung
-   define(MGVO_DEBUG_ERG,16);        // Ergebnisarray vor Übergabe an Sniplet-Funktionen
+   define('MGVO_DEBUG_ERR',1);         // Allg. Fehlerausgaben
+   define('MGVO_DEBUG_DATA',2);        // XML-Ergebnis vom Aufruf
+   define('MGVO_DEBUG_XML',4);         // Array nach XML-Konvertierung
+   define('MGVO_DEBUG_XMLTRANS',8);    // Schritte der XML-Konvertierung
+   define('MGVO_DEBUG_ERG',16);        // Ergebnisarray vor Übergabe an Sniplet-Funktionen
 
    function mgvo_log($comment,$lv,$dtyp) {
       global $mgvo_debug;
@@ -46,6 +46,12 @@
       $cstr = mb_convert_encoding($str,"CP1252","UTF-8");
       return $cstr;
    }
+   
+   function saveassign($arr,$idx,$initval) {
+      if (isset($arr[$idx])) return $arr[$idx];
+      else return $initval;
+   }
+      
 
    function prep_ar($ar) {
       foreach($ar as $key => $value) {
