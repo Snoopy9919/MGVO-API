@@ -40,10 +40,21 @@
                $ret = file_get_contents($fn);
             }
          }
-         if (empty($ret)) {
-            $ret = http_get($url);
-            mgvo_log("XML-Returnstring",$ret,MGVO_DEBUG_DATA);
-            if ($this->cachetime > 0) file_put_contents($fn,$ret);
+         if (empty($ret)) { 
+			$ret = http_get($url);
+			// Prüfen, ob der Aufsruf erfoglreich war
+			if(empty($ret) or strpos($ret, "Nicht erlaubt!") and strpos($ret,"Sicherheitsversto") or !strpos($ret, "DOCTYPE xml" )) { 
+				mgvo_log("XML nicht korekt geladen, versuche Cache zu verwenden",$ret,MGVO_DEBUG_ERR);
+				// Prüfen, ob es einen Cache gibt
+				if (is_file($fn)) {
+					$ret = file_get_contents($fn);
+				} else {
+					$ret = false; // wenn weder ein XML geladen werden konnte noch ein Cache da ist, wird False zurückgegeben
+				}
+			} else {
+				if ($this->cachetime > 0) file_put_contents($fn,$ret);
+				mgvo_log("XML-Returnstring",$ret,MGVO_DEBUG_DATA);
+			}
          }
          return $ret;
       }
