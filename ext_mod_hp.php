@@ -19,7 +19,7 @@
       function __construct($call_id,...$vp) {
          extract(vp_assign($vp,"vcryptkey,cachemin"));
          // call_id: call_id des Vereins
-         // vcryptkey: Schlüssel für die synchrone Verschlüsselung. Wird in MGVO in den technischen Parametern eingetragen 
+         // vcryptkey: SchlÃ¼ssel fÃ¼r die synchrone VerschlÃ¼sselung. Wird in MGVO in den technischen Parametern eingetragen 
          // cachetime: Legt die Cachezeit in Minuten fest. Wenn nicht angegeben, werden 5 Minuten gesetzt
          $this->call_id = $call_id;
          $cachemin = isset($cachemin) ? $cachemin : 5;
@@ -30,7 +30,7 @@
       function http_get_cached($url,$paras) {
          // Die Funktion holt die Daten per https und legt sie als Datei auf dem lokalen Dateisystem ab.
          // Beim Initiieren der MGVO-Klasse kann die Cachedauer festgelegt werden. Sie wird ohne explizite Angabe 
-         // auf fünf Minuten festgelegt.
+         // auf fÃ¼nf Minuten festgelegt.
          $urlinfo = parse_url($url);
          $fi = pathinfo($urlinfo['path']);
          $fn = $fi['filename'].".".$paras.".cache";
@@ -41,20 +41,21 @@
             }
          }
          if (empty($ret)) { 
-			$ret = http_get($url);
-			// Prüfen, ob der Aufsruf erfoglreich war
-			if(empty($ret) or strpos($ret, "Nicht erlaubt!") and strpos($ret,"Sicherheitsversto") or !strpos($ret, "DOCTYPE xml" )) { 
-				mgvo_log("XML nicht korekt geladen, versuche Cache zu verwenden",$ret,MGVO_DEBUG_ERR);
-				// Prüfen, ob es einen Cache gibt
-				if (is_file($fn)) {
-					$ret = file_get_contents($fn);
-				} else {
-					$ret = false; // wenn weder ein XML geladen werden konnte noch ein Cache da ist, wird False zurückgegeben
-				}
-			} else {
-				if ($this->cachetime > 0) file_put_contents($fn,$ret);
-				mgvo_log("XML-Returnstring",$ret,MGVO_DEBUG_DATA);
-			}
+            $ret = http_get($url);
+            // PrÃ¼fen, ob der Aufsruf erfolgreich war
+            if (empty($ret) || strpos($ret, "Nicht erlaubt!") && strpos($ret,"Sicherheitsversto") || !strpos($ret, "DOCTYPE xml" )) { 
+               mgvo_log("XML nicht korekt geladen, versuche Cache zu verwenden",$ret,MGVO_DEBUG_ERR);
+               // PrÃ¼fen, ob es einen Cache gibt
+               if (is_file($fn)) {
+                  $ret = file_get_contents($fn);
+               } else {
+                  $ret = false; // wenn weder ein XML geladen werden konnte noch ein Cache da ist, wird False zurÃ¼ckgegeben
+               }
+            } 
+            else {
+               if ($this->cachetime > 0) file_put_contents($fn,$ret);
+               mgvo_log("XML-Returnstring",$ret,MGVO_DEBUG_DATA);
+            }
          }
          return $ret;
       }
@@ -66,7 +67,7 @@
                   mgvo_log("Element",$xml->name,MGVO_DEBUG_XMLTRANS);
                   if (isset($exElar) && in_array($xml->name,$exElar)) continue 2;
                   if (isset($icnt[$xml->name]) && $icnt[$xml->name] > 0) {
-                     if ($icnt[$xml->name] == 1) {  // Umhängen Knoten als Array
+                     if ($icnt[$xml->name] == 1) {  // UmhÃ¤ngen Knoten als Array
                         $oldval = $node[$xml->name];
                         unset ($node[$xml->name]);
                         $node[$xml->name][] = $oldval;
@@ -167,7 +168,7 @@
       }
       
       function read_events() {
-         // Liest die öffentlichen Veranstaltungen
+         // Liest die Ã¶ffentlichen Veranstaltungen
          $this->cacheon = 1;
          $vars['call_id'] = $this->call_id;
          $paras = http_build_query($vars);
@@ -218,21 +219,21 @@
          // Gruppen-ID: suchgruid
          // Beitragsgruppe: suchbeigru
          // Lastschriftzahler: lssel (Selektionswert: 1)
-         // Barzahler/Überweiser: barsel (Selektionswert: 1)
+         // Barzahler/Ãœberweiser: barsel (Selektionswert: 1)
          // Dauerauftrag: dasel (Selektionswert: 1)
          // Geschlecht: geschl (x,m,w)
          // Mitglied: ausgetr (x,m,a)
          // Aktiv/Passiv: aktpass (x,a,p)
-         // Mailempfänger: mailempf (x,e,s)
+         // MailempfÃ¤nger: mailempf (x,e,s)
          // Inland/Ausland: (x,i,a)
          // Mahnstufe: (a,1,2,3)
-         $cipher = new Cipher();                         // Initialisierung der Verschlüsselung
+         $cipher = new Cipher();                         // Initialisierung der VerschlÃ¼sselung
          $cipher->init($this->vcryptkey);
          
          $this->cacheon = 1;
-         $selparar['call_id'] = $this->call_id;         // Zusammenstellung der Parameter call_id verschlüsselt
+         $selparar['call_id'] = $this->call_id;         // Zusammenstellung der Parameter call_id verschlÃ¼sselt
          $suchparas = http_build_query($selparar);      // Parameterstring zusammensetzen
-         $cparas = $cipher->encrypt($suchparas);        // verschlüsseln
+         $cparas = $cipher->encrypt($suchparas);        // verschlÃ¼sseln
          $cpe = rawurlencode($cparas);
          
          $url = "$this->urlroot/pub_mit_xml.php?paras=$cpe&call_id=$this->call_id";
@@ -250,16 +251,16 @@
       
       function get_mitpict($mgnr) {
          // mgnr: Mitgliedsnummer
-         // Liefert das Passbild eines Mitglieds inklusive mimetype und fsize (Dateigröße).
+         // Liefert das Passbild eines Mitglieds inklusive mimetype und fsize (DateigrÃ¶ÃŸe).
          // Das eigentliche Bild ist base64 codiert.
-         $cipher = new Cipher();                         // Initialisierung der Verschlüsselung
+         $cipher = new Cipher();                         // Initialisierung der VerschlÃ¼sselung
          $cipher->init($this->vcryptkey);
          
          $this->cacheon = 1;
-         $vars['call_id'] = $this->call_id;         // Zusammenstellung der Parameter call_id verschlüsselt
+         $vars['call_id'] = $this->call_id;         // Zusammenstellung der Parameter call_id verschlÃ¼sselt
          $vars['mgnr'] = $mgnr;
          $suchparas = http_build_query($vars);      // Parameterstring zusammensetzen
-         $cparas = $cipher->encrypt($suchparas);        // verschlüsseln
+         $cparas = $cipher->encrypt($suchparas);        // verschlÃ¼sseln
          $cpe = rawurlencode($cparas);
          
          $url = "$this->urlroot/pub_mitpict_xml.php?paras=$cpe&call_id=$this->call_id";
@@ -270,7 +271,7 @@
       
       function list_documents(...$vp) {
          extract(vp_assign($vp,"dokart"));
-         // dokart: Es werden öffentliche Dokumente der spezifizierten Dokumentart aufgelistet
+         // dokart: Es werden Ã¶ffentliche Dokumente der spezifizierten Dokumentart aufgelistet
          $this->cacheon = 1;
          $vars['call_id'] = $this->call_id;
          $vars['dokart'] = $dokart;
@@ -285,13 +286,13 @@
          // Die Methode hat folgende Returncodes:
          // 0  : Passwort nicht in Ordnung / User nicht vorhanden
          // 1  : Login ok
-         // 10 : PIS nicht gefüllt
-         // 11 : Max. Logon-Versuche überschritten
-         // 12 : Geheimcode generiert und an Mobilgerät versendet, Logon muss mit Code erfolgen
-         // 13 : Geheimcode (SMS-Code) stimmt nicht überein
+         // 10 : PIS nicht gefÃ¼llt
+         // 11 : Max. Logon-Versuche Ã¼berschritten
+         // 12 : Geheimcode generiert und an MobilgerÃ¤t versendet, Logon muss mit Code erfolgen
+         // 13 : Geheimcode (SMS-Code) stimmt nicht Ã¼berein
          
          // Der Personal Identity String (PIS) wird durch Aufruf der Javascript-Funktion "get_browserpis"
-         // erzeugt und muss an den Login übergeben werden, wenn eine Zwei-Faktor-Authentifizierung genutzt werden soll.
+         // erzeugt und muss an den Login Ã¼bergeben werden, wenn eine Zwei-Faktor-Authentifizierung genutzt werden soll.
         
          $this->cacheon = 0;
          $vars['call_id'] = $this->call_id;
