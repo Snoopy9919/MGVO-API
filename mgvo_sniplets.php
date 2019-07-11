@@ -194,7 +194,7 @@
          return $sniplet;
       }
       
-      function mgvo_sniplet_read_mitglieder($selparar) {
+      function mgvo_sniplet_read_mitglieder($selparar=NULL) {
          // Selektion von Mitgliedern. 
          $resar = $this->api->read_mitglieder($selparar);
          $sniplet = "<div class='mgvo mgvo-mitglieder'>";
@@ -217,8 +217,8 @@
             $sniplet .= "<td>$mr[str]</td>";
             $sniplet .= "<td>$mr[plz]</td>";
             $sniplet .= "<td>$mr[ort]</td>";
-            $sniplet .= "<td>$mr[eintritt]</td>";
-            $sniplet .= "<td>$mr[austritt]</td>";
+            $sniplet .= "<td>".date2user($mr['eintritt'],1)."</td>";
+            $sniplet .= "<td>".date2user($mr['austritt'],1)."</td>";
             $sniplet .= "</tr>";
          }
          $sniplet .= "</table><br>";

@@ -22,6 +22,7 @@
          // vcryptkey: Schlüssel für die synchrone Verschlüsselung. Wird in MGVO in den technischen Parametern eingetragen 
          // cachetime: Legt die Cachezeit in Minuten fest. Wenn nicht angegeben, werden 5 Minuten gesetzt
          $this->call_id = $call_id;
+         $this->vcryptkey = $vcryptkey;
          $cachemin = isset($cachemin) ? $cachemin : 5;
          $this->cachetime = $cachemin * 60;                // cachetime in Sekunden
          $this->urlroot = "https://www.mgvo.de/prog";
