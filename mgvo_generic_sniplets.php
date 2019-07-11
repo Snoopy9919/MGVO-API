@@ -1,6 +1,6 @@
 <?php
 
-require_once(dirname(__FILE__)."/mgvo_sniplet.php");
+require_once(dirname(__FILE__)."/mgvo_sniplets.php");
  
 class MGVO_GEN_SNIPLET extends MGVO_SNIPLET {
  

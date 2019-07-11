@@ -11,7 +11,6 @@
 
    function mgvo_log($comment,$lv,$dtyp) {
       global $mgvo_debug;
-	  //$mgvo_debug = 31;
       if (($dtyp & $mgvo_debug) > 0) {
          if (!empty($comment) && is_string($lv) && !empty($lv)) {
             $txt = "$comment: $lv";
