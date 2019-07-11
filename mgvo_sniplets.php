@@ -31,7 +31,7 @@
 	  function mgvo_sniplet_vkal($vkalnr,$seljahr) {
          // Liest den Vereinskalender mit Nr. vkalnr mit Terminen des Jahres seljahr
          $resar = $this->api->read_vkal($vkalnr,$seljahr);
-      
+         
          $sniplet = "<div class='mgvo mgvo-vkal'>";
          $sniplet .= $this->write_headline($resar['headline']);
          $sniplet .= "<table cellpadding=1 cellspacing=0 border=1>";
@@ -64,6 +64,7 @@
       
       function mgvo_sniplet_orte() {
          // Liest die Ortsliete ein
+
          $resar = $this->api->read_orte();
        
          $sniplet = "<div class='mgvo mgvo-orte'>";
@@ -86,6 +87,7 @@
             
       function mgvo_sniplet_betreuer() {
          // Liest die Betreuer ein
+		 
          $resar = $this->api->read_betreuer();
          
          $sniplet = "<div class='mgvo mgvo-betreuer'>";
@@ -128,7 +130,7 @@
             $sniplet .= "<td>$or[name]</td>";
             $sniplet .= "<td>$or[description]</td>";
             $sniplet .= "<td>$or[ort]</td>";
-            $sniplet .= "<td>".date2user($vkr['startdate'],1)."</td>";
+            $sniplet .= "<td>".date2user($or['startdate'],1)."</td>";
             $sniplet .= "<td>$or[starttime]</td>";
             if (!empty($or['besturl'])) $sniplet .= "<td><a href='$or[besturl]' target=_blank>Bestell-URL</a></td>";
             else $sniplet .= "<td></td>";
@@ -283,117 +285,7 @@
          echo $content;
       }
 	  
-	  // *************************
-	  // Generic Sniplets
-	  //
-	  //  Mit diesen Funktion lassen sich generisch beliebige HTML-Tabellen aus MGVO erstellen. 
-	  //  Mit den Einträgen $vkal_use_fields_table, $vkal_head_fields_tablen und $vkal_sanitize_fields_table  wird gesteuert, welche Felder ausgegeben werden
-      //  Die verfügbaren Felder können dem XML (<objfieldlist>) entnommen werden und sind auch im Array der API verfügbar)
-      //  $vkal_use_fields_table =  zu verwendendene Felder  
-      //  $vkal_head_fields_table = dazugehörige Überschriften (gleiche Anzahl wie Felder erforderlich)
-      //  $vkal_sanitize_fields_table = Felder, die eine Datumsbehandlung benötigen
-	  //  die Spalten haben jeweils eine CSS-Klasse mgvo-f-<feldname>, z.B. mgvo-f-bez, somit lassen sich im CSS die Spaltenbreiten individuell angeben.
-	  //
-	  // *************************
-	  
-	  
-	  function mgvo_gen_sniplet_vkal($vkalnr,$seljahr, $vkal_use_fields_table = Null, $vkal_head_fields_table = Null) {
-         // Liest den Vereinskalender mit Nr. vkalnr mit Terminen des Jahres seljahr als HTML. 
-         //  Verfügbare Felder: startdat,bez,prio,vkalnr,evnr,startzeit,enddat,endzeit,ortid,notiz,rec_day_freq,rec_wk_freq,rec_mon_freq1,rec_mon_tag,rec_mon_freq2,rec_yr_freq1,rec_yr_tag,rec_yr_freq2,rec_range_enddat,ort,ortkb
-		 // Konfig-Anleitung siehe oben
-		 if (empty($vkal_use_fields_table) or empty($vkal_head_fields_table)) {
-            $vkal_use_fields_table = explode(",","startdat,bez,prio,vkalnr,evnr,startzeit,enddat,endzeit,ortid,notiz,rec_day_freq,rec_wk_freq,rec_mon_freq1,rec_mon_tag,rec_mon_freq2,rec_yr_freq1,rec_yr_tag,rec_yr_freq2,rec_range_enddat,ort,ortkb");
-            $vkal_head_fields_table = explode(",","startdat,bez,prio,vkalnr,evnr,startzeit,enddat,endzeit,ortid,notiz,rec_day_freq,rec_wk_freq,rec_mon_freq1,rec_mon_tag,rec_mon_freq2,rec_yr_freq1,rec_yr_tag,rec_yr_freq2,rec_range_enddat,ort,ortkb");
-        }
-        if (count($vkal_use_fields_table) != count($vkal_head_fields_table)) {
-            $sniplet .= "Anzahl der Felder und Überschriften in mgvo_sniplet_vkal() nicht gleich";
-			return $sniplet;
-        }      
-        $vkal_sanitize_fields_table  = explode(",","startdat,startzeit,enddat,endzeit");
- 
-         // Liest den Vereinskalender mit Nr. vkalnr mit Terminen des Jahres seljahr
-         $resar = $this->api->read_vkal($vkalnr,$seljahr);
-		 
-		 return $this->mgvo_generic_sniplet($resar , "mgvo-vkal" ,$vkal_use_fields_table, $vkal_head_fields_table, $vkal_sanitize_fields_table );
-	  }
-	  
-	  
-      function mgvo_generic_sniplet($resar, $css_class, $use_fields_table, $head_fields_table, $sanitize_fields_table ) {
-             
-         $sniplet = "<div class='mgvo ".$css_class."'>";
-         $sniplet .= $this->write_headline($resar['headline']);
-         $sniplet .= "<table cellpadding=1 cellspacing=0 border=1>";
-         $sniplet .= "<tr>";
-         
-         foreach ($head_fields_table  as  $header) {
-                $sniplet .= "<th class='mgvo-h-".$field."'>".$header."</th>";
-         }
-         $sniplet .= "</tr>";
-		 
-         foreach($resar['objar'] as $idx => $vkr) {
-            $sniplet .= "<tr>";
-            foreach ($use_fields_table as  $field) {
-                if (isset($vkr[$field])) {
-                    if (in_array($field, $sanitize_fields_table)) {
-                        $sniplet .= "<td class='mgvo-f-".$field."'>".date2user($vkr[$field])."</td>"; 
-                    } else {
-                        $sniplet .= "<td class='mgvo-f-".$field."'>".$vkr[$field]."</td>"; 
-                    }
-                } else {
-                   $sniplet .= "<td class='mgvo-f-".$field."'></td>";
-             }
-            }
-            $sniplet .= "</tr>"; 
-         }
-         $sniplet .= "</table>";
-         $sniplet .= "</div>";
-         return $sniplet;
-      }
-    
-	
-	
-	  function mgvo_gen_sniplet_vkal_entry($vkalnr,$seljahr, $arrayindex, $vkal_use_fields_table = Null, $vkal_head_fields_table = Null) {
-         // Liest den Vereinskalender mit Nr. vkalnr mit Terminen des Jahres seljahr und gibt den Temrin mit der EventID aus. 
-         //  Verfügbare Felder: startdat,bez,prio,vkalnr,evnr,startzeit,enddat,endzeit,ortid,notiz,rec_day_freq,rec_wk_freq,rec_mon_freq1,rec_mon_tag,rec_mon_freq2,rec_yr_freq1,rec_yr_tag,rec_yr_freq2,rec_range_enddat,ort,ortkb
-		 // Konfig-Anleitung siehe oben
-		 if (empty($vkal_use_fields_table) or empty($vkal_head_fields_table)) {
-            $vkal_use_fields_table = explode(",","startdat,bez,prio,vkalnr,evnr,startzeit,enddat,endzeit,ortid,notiz,rec_day_freq,rec_wk_freq,rec_mon_freq1,rec_mon_tag,rec_mon_freq2,rec_yr_freq1,rec_yr_tag,rec_yr_freq2,rec_range_enddat,ort,ortkb");
-            $vkal_head_fields_table = explode(",","startdat,bez,prio,vkalnr,evnr,startzeit,enddat,endzeit,ortid,notiz,rec_day_freq,rec_wk_freq,rec_mon_freq1,rec_mon_tag,rec_mon_freq2,rec_yr_freq1,rec_yr_tag,rec_yr_freq2,rec_range_enddat,ort,ortkb");
-        }
-        if (count($vkal_use_fields_table) != count($vkal_head_fields_table)) {
-            $sniplet .= "Anzahl der Felder und Überschriften in mgvo_sniplet_vkal_entry() nicht gleich";
-			return $sniplet;
-        }      
-        $vkal_sanitize_fields_table  = explode(",","startdat,startzeit,enddat,endzeit");
- 
-         // Liest den Vereinskalender mit Nr. vkalnr mit Terminen des Jahres seljahr
-         $resar = $this->api->read_vkal($vkalnr,$seljahr);
-		 
-		 return $this->mgvo_generic_sniplet_entry($resar , $arrayindex, "mgvo-vkal-entry" ,$vkal_use_fields_table, $vkal_head_fields_table, $vkal_sanitize_fields_table );
-	  }
-	
-	  function mgvo_generic_sniplet_entry($resar, $arrayindex, $css_class, $use_fields_table, $head_fields_table, $sanitize_fields_table ) {
-             
-         $sniplet = "<div class='mgvo ".$css_class."'>";
-         $sniplet .= $this->write_headline($resar['headline']);
-         $sniplet .= "<table cellpadding=1 cellspacing=0 border=1>";
-         
-		 $fields_table = array_combine($use_fields_table, $head_fields_table);
-		 error_log(substr (print_r($resar, true),0,2500));
-		 
-		 $sniplet .= "<tr>";
-		 foreach ($fields_table  as  $field => $header) {
-			$sniplet .= "<tr><th class='mgvo-h-".$field."'>".$header."</th>";
-			if (in_array($field, $sanitize_fields_table)) {
-				$sniplet .= "<td class='mgvo-f-".$field."'>".date2user($resar['objar'][$arrayindex][$field])."</td></tr>"; 
-			} else {
-				$sniplet .= "<td class='mgvo-f-".$field."'>".$resar['objar'][$arrayindex][$field]."</td></tr>"; 
-			}		
-		 }
-         $sniplet .= "</table>";
-         $sniplet .= "</div>";
-         return $sniplet;
-      }  
+	 
    }
    
 ?>

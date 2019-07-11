@@ -61,6 +61,7 @@
       }
       
       function xml2subtab($xml,$exElar) {
+		 error_reporting(E_ALL & ~E_NOTICE); // Fällt unter Notwehr ;-) 
          while($xml->read()) {
             switch($xml->nodeType) {
                case XMLReader::ELEMENT:
@@ -111,6 +112,7 @@
       }
       
       function create_ergar($rootname,$objname) {
+		 error_reporting(E_ALL & ~E_NOTICE); // Fällt unter Notwehr ;-)
          $rootar = saveassign($this->tab,$rootname,array());
          $this->headline = saveassign($rootar,"headline","");
          $this->verein = saveassign($rootar,"verein","");
@@ -131,6 +133,7 @@
          $ergar['version'] = $this->version;
          $ergar['objar'] = $zar;
          mgvo_log("Ergebnistabelle",$ergar,MGVO_DEBUG_ERG);
+		 error_reporting(E_ALL);
          return $ergar;
       }
       
@@ -206,7 +209,7 @@
          $paras = http_build_query($vars);
          $url = "$this->urlroot/pub_ortreserv_xml.php?$paras";
          $this->tab = $this->xml2table($url,$paras);
-         $ergar = $this->create_ergar("grouplist","group");
+         $ergar = $this->create_ergar("reservelist","cancellation ");
          return $ergar;
       }
       
