@@ -185,12 +185,34 @@
       
       function mgvo_sniplet_training_fail() {
          $resar = $this->api->read_training_fail();
-       
-         //  Hier sollte der Code stehen, der aus den Ergebnis eine HTML-Struktur macht
+
          $sniplet = "<div class='mgvo mgvo-trainingfail'>";
-         $sniplet .= "";
+         $sniplet .= $this->write_headline($resar['headline']);
+         $sniplet .= "<table cellpadding=2 cellspacing=0 border=1>";
+         $sniplet .= "<tr>";
+         $sniplet .= "<th>Gruppe / Belegung</th>";
+         $sniplet .= "<th>Datum</th>";
+         $sniplet .= "<th>Zeit</th>";
+         $sniplet .= "<th>Ort</th>";
+         $sniplet .= "<th colspan=3>neu</th>";
+         $sniplet .= "<th>Grund / Veranstaltung</th>";
+         $sniplet .= "</tr>";
+         foreach($resar['objar'] as $tfr) {
+            $sniplet .= "<tr>";
+            if (!empty($tfr['grbez'])) $sniplet .= "<td>$tfr[grbez] ($tfr[gruid])</td>";
+            else $sniplet .= "<td>$tfr[belbez]</td>";
+            $sniplet .= "<td>".date2user($tfr['sdat'],1)."</td>";
+            $sniplet .= "<td>".time2user($tfr['starttime'])." - ".time2user($tfr['endtime'])."</td>";
+            $sniplet .= "<td>$tfr[ortsbez]</td>";
+            if (!emptyval($tfr['neudat'])) $sniplet .= "<td>".date2user($tfr['neudat'],1)."</td>";
+            else $sniplet .= "<td></td>";
+            $sniplet .= "<td>$tfr[neuzeithtml]</td>";
+            $sniplet .= "<td>$tfr[neuorthtml]</td>";
+            $sniplet .= "<td>$tfr[ebez]</td>";
+            $sniplet .= "</tr>";
+         }
+         $sniplet .= "</table><br>";
          $sniplet .= "</div>";
- 
          return $sniplet;
       }
       
@@ -209,6 +231,7 @@
          $sniplet .= "<th>Ort</th>";
          $sniplet .= "<th>Eintritt</th>";
          $sniplet .= "<th>Austritt</th>";
+         $sniplet .= "</tr>";
          foreach($resar['objar'] as $mr) {
             $sniplet .= "<tr>";
             $sniplet .= "<td>$mr[mgnr]</td>";

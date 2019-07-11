@@ -207,7 +207,7 @@
          $paras = http_build_query($vars);
          $url = "$this->urlroot/pub_ortreserv_xml.php?$paras";
          $this->tab = $this->xml2table($url,$paras);
-         $ergar = $this->create_ergar("grouplist","group");
+         $ergar = $this->create_ergar("reservelist","cancellation");
          return $ergar;
       }
       

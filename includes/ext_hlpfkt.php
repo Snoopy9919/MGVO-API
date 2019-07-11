@@ -121,8 +121,7 @@
       return $hv;
    }
    
-   function date2user($db_datum,...$vp) {
-      $typ = empty($vp[0]) ? 1 : $vp[0];
+   function date2user($db_datum,$typ=1) {
       if ($db_datum == "" || $db_datum == "0000-00-00") return "";
       $year = substr($db_datum,0,4);
       $syear = substr($db_datum,2,2);
@@ -156,6 +155,21 @@
             break;
       }
       return $datum;
+   }
+   
+   function time2user($time) {
+      if ($time == "") return "";
+      $va = sscanf($time,"%2d:%2d:%2d");
+      $usertime = sprintf("%d:%02d",$va[0],$va[1]);
+      if ($va[2] != 0) $usertime .= sprintf(":%02d",$va[2]);
+      return $usertime;
+   }
+   
+   function emptyval($fval) {
+      if (empty($fval) || $fval == "0000-00-00" || $fval == "00:00:00" || $fval == "00:00" || 
+          $fval == "0000-00-00 00:00:00" || is_numeric($fval) && $fval == 0.0)
+          return true;
+      return false;
    }
    
 ?>
