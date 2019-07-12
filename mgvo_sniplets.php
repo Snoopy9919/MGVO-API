@@ -124,7 +124,7 @@
             $sniplet .= "<td>$or[name]</td>";
             $sniplet .= "<td>$or[description]</td>";
             $sniplet .= "<td>$or[ort]</td>";
-            $sniplet .= "<td>".date2user($vkr['startdate'],1)."</td>";
+            $sniplet .= "<td>".date2user($or['startdate'],1)."</td>";
             $sniplet .= "<td>$or[starttime]</td>";
             if (!empty($or['besturl'])) $sniplet .= "<td><a href='$or[besturl]' target=_blank>Bestell-URL</a></td>";
             else $sniplet .= "<td></td>";
