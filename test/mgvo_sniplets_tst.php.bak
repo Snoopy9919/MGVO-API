@@ -1,6 +1,8 @@
 <?php
 
-   require("../mgvo_sniplets.php");
+   require("../mgvo_sniplets.php");   
+   
+   $mgvo_debug = MGVO_DEBUG_ERR | MGVO_DEBUG_DATA | MGVO_DEBUG_XMLTRANS;
    
    // call_id zur Identifikation des Vereins (hier: Demoverein)
    $call_id = "9a052167eb8a71f51b686e35c18a665a";
@@ -13,8 +15,6 @@
    $sniplet_no = isset($_GET['sniplet_no']) && is_numeric($_GET['sniplet_no']) ? $_GET['sniplet_no'] : 1;
    
    $msc = new MGVO_SNIPLET($call_id,$vcryptkey,0);
-   
-   $msc->set_debuglevel(MGVO_DEBUG_ERR | MGVO_DEBUG_DATA | MGVO_DEBUG_XMLTRANS);
    
    switch($sniplet_no) {
       case 1:

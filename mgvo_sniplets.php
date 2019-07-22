@@ -18,6 +18,11 @@
          $this->api = new MGVO_HPAPI($call_id,$vcryptkey,$cachemin);
       }
       
+      function set_debuglevel($debuglevel=0) {
+         $this->api->set_debuglevel($debuglevel);
+         
+      }
+      
       function set_headline($headline) {
          $this->headline = $headline;
       }

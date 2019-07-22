@@ -15,6 +15,7 @@
       private $version;
       private $verein;
       private $objar;
+      private $debuglevel;
             
       function __construct($call_id,$vcryptkey=NULL,$cachetime=5) {
          // call_id: call_id des Vereins
@@ -24,6 +25,12 @@
          $this->vcryptkey = $vcryptkey;
          $this->cachetime = $cachetime * 60;                // cachetime in Sekunden
          $this->urlroot = "https://www.mgvo.de/prog";
+      }
+      
+      function set_debuglevel($debuglevel) {
+         global $mgvo_debug;
+         $this->debuglevel = $debuglevel;
+         $mgvo_debug = $debuglevel;
       }
       
       function http_get_cached($url,$paras) {
