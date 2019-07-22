@@ -1,6 +1,6 @@
 <?php
 
-   require("../sniplets/mgvo_sniplets.php");
+   require("../mgvo_sniplets.php");
    
    $glob_debug = 0;
    

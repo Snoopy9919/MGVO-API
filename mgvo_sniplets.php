@@ -22,7 +22,7 @@
          $this->headline = $headline;
       }
       
-      function write_headline($mgvo_headline) {
+      function write_headline($mgvo_headline="") {
          $headline = empty($this->headline) ? $mgvo_headline : $this->headline;
          $sniplet = "<h2>$headline</h2>";
          return $sniplet;
@@ -252,13 +252,13 @@
       function mgvo_sniplet_show_mitglied($mgnr) {
          $mr = $this->api->show_mitglied($mgnr);
          $sniplet = "<div class='mgvo mgvo-mitglieder'>";
-         $sniplet .= $this->write_headline($resar['headline']);
+         $sniplet .= $this->write_headline("Anzeige Mitglied");
          $sniplet .= "<table cellpadding=2 cellspacing=0 border=1>";
          foreach($mr as $fieldname => $value) {
             $sniplet .= "<tr><td>$fieldname:</td><td>$value</td></th>";
          }
-         $sniplet = "</table>";
-         $sniplet = "</div>";
+         $sniplet .= "</table>";
+         $sniplet .= "</div>";
          return $sniplet;
       }
       

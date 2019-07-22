@@ -16,7 +16,7 @@
    
    $msc = new MGVO_SNIPLET($call_id,$vcryptkey,0);  
    
-   $html = $msc->mgvo_sniplet_training_fail();
+   $html = $msc->mgvo_sniplet_show_mitglied(8);
    
    echo "<center>$html";
    echo "</center></body></html>";

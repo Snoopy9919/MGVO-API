@@ -246,7 +246,7 @@
       function show_mitglied($mgnr) {
          $selparar['suchbeg'] = $mgnr;
          $this->read_mitglieder($selparar);
-         $mr = $this->objar;
+         $mr = $this->objar[0];
          return $mr;
       }
       
