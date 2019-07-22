@@ -16,15 +16,13 @@
       private $verein;
       private $objar;
             
-      function __construct($call_id,...$vp) {
-         extract(vp_assign($vp,"vcryptkey,cachemin"));
+      function __construct($call_id,$vcryptkey=NULL,$cachetime=5) {
          // call_id: call_id des Vereins
          // vcryptkey: Schlüssel für die synchrone Verschlüsselung. Wird in MGVO in den technischen Parametern eingetragen 
          // cachetime: Legt die Cachezeit in Minuten fest. Wenn nicht angegeben, werden 5 Minuten gesetzt
          $this->call_id = $call_id;
          $this->vcryptkey = $vcryptkey;
-         $cachemin = isset($cachemin) ? $cachemin : 5;
-         $this->cachetime = $cachemin * 60;                // cachetime in Sekunden
+         $this->cachetime = $cachetime * 60;                // cachetime in Sekunden
          $this->urlroot = "https://www.mgvo.de/prog";
       }
       
@@ -93,8 +91,7 @@
          }
       }
          
-      function xml2table($url,$paras,...$vp) {
-         extract(vp_assign($vp,"exElar"));
+      function xml2table($url,$paras,$exElar=NULL) {
          $ret = $this->http_get_cached($url,$paras);
          $xml = new XMLReader();
          if ($xml->xml($ret) === false) {
@@ -270,8 +267,7 @@
          return $ergar;
       }
       
-      function list_documents(...$vp) {
-         extract(vp_assign($vp,"dokart"));
+      function list_documents($dokart=NULL) {
          // dokart: Es werden öffentliche Dokumente der spezifizierten Dokumentart aufgelistet
          $this->cacheon = 1;
          $vars['call_id'] = $this->call_id;

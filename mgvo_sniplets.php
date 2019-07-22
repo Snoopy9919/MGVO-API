@@ -59,7 +59,7 @@
       }
       
       function mgvo_sniplet_orte() {
-         // Liest die Ortsliete ein
+         // Liest die Ortsliste ein
          $resar = $this->api->read_orte();
        
          $sniplet = "<div class='mgvo mgvo-orte'>";
@@ -262,7 +262,7 @@
          return $sniplet;
       }
       
-      function mgvo_sniplet_list_documents($dokart) {
+      function mgvo_sniplet_list_documents($dokart=NULL) {
          $resar = $this->api->list_documents($dokart);
          $sniplet = "<div class='mgvo mgvo-documents'>";
          $sniplet .= $this->write_headline($resar['headline']);
