@@ -41,9 +41,9 @@
          }
          if (empty($ret)) { 
             $ret = http_get($url);
-            // Prüfen, ob der Aufsruf erfolgreich war
+            // Prüfen, ob der Aufruf erfolgreich war
             if (empty($ret) || strpos($ret, "Nicht erlaubt!") && strpos($ret,"Sicherheitsversto") || !strpos($ret, "DOCTYPE xml" )) { 
-               mgvo_log("XML nicht korekt geladen, versuche Cache zu verwenden",$ret,MGVO_DEBUG_ERR);
+               mgvo_log("XML nicht korrekt geladen, versuche Cache zu verwenden",$ret,MGVO_DEBUG_ERR);
                // Prüfen, ob es einen Cache gibt
                if (is_file($fn)) {
                   $ret = file_get_contents($fn);
