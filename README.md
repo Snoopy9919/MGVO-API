@@ -1,7 +1,7 @@
 # MGVO-API
 Homepage API for MGVO.
 
-See https://www.mgvo.info
+See https://info.mgvo.de
 
 Files ext_mod_hp.php: Library for exchanging data from and to an MGVO account.
       mgvo_sniplets.php: Library to generate HTML-Code out of the received data as a basic implementation for any CMS plugin
