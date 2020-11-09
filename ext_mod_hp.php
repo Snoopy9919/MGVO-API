@@ -5,6 +5,7 @@
    
    class MGVO_HPAPI {
       private $call_id;
+      private $callidc;           // call_id verschlüsslt mit vcryptkey
       private $vcryptkey;
       private $urlroot;
       private $cacheon;
@@ -25,6 +26,8 @@
          $this->vcryptkey = $vcryptkey;
          $this->cachetime = $cachetime * 60;                // cachetime in Sekunden
          $this->urlroot = "https://www.mgvo.de/prog";
+         $cipher = new Cipher($vcryptkey);
+         $this->callidc = $cipher->encrypt($call_id);
       }
       
       function set_debuglevel($debuglevel) {
@@ -311,6 +314,25 @@
          return $retcode;
       }
       
+      function create_mitstamm($inar) {
+         global $glob_debug;
+         // Returncodes:
+         //  -1: Parameter missing
+         // -64: callidc nicht vorhanden
+         // -65: vcryptkey nicht vorhanden
+         // -66: call_id stimmt nicht überein
+         // -16: Mussfeld nicht vorhanden
+         // -17: Feldwert nicht im Definitionsbereich
+         //   0: <Mitgliedsnummer>
+         global $glob_curlerror_no,$glob_curlerror_msg;
+         $paras['call_id'] = $this->call_id;
+         $paras['callidc'] = $this->callidc;
+         $paras['inarjc'] = json_encode($inar);
+         $url = "$this->urlroot/pub_createmit.php";
+         $ret = http_post($url,$paras);
+         $retar = json_decode($ret,1);
+         return $retar;
+      }
    }
    
 ?>

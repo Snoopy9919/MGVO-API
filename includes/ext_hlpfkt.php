@@ -26,20 +26,13 @@
       }
    }
 
-   function localecho($ipadr,$out,...$vp) {
-      $t = $vp[0];
+   function localecho($ipadr,$out,$t=0) {
       if ($_ENV['REMOTE_ADDR'] == $ipadr) {
          if (is_array($out)) print_ar($out);
          else echo $out."<br>";
       }
       flush();
       if (!empty($t)) sleep($t);
-   }
-   
-   function vp_assign($vp,$varlist) {
-      $varar = explode(",",$varlist);
-      foreach($varar as $i => $vn) $valar[$vn] = isset($vp[$i]) ? $vp[$i] : NULL;
-      return $valar;
    }
 
    function utf8_dec($str) {
@@ -68,8 +61,7 @@
       echo "</pre>";
    }
    
-   function http_get($url,...$vp) {
-      extract(vp_assign($vp,"auth,optar"));
+   function http_get($url,$auth="",$optar=array()) {
       global $glob_debug,$glob_curlerror_no,$glob_curlerror_msg;
       if ($glob_debug) {
          echo "</center>";
@@ -110,6 +102,48 @@
       }
       curl_close($ch);
       if ($glob_debug) echo "Returnwert: $result<br><br>";
+      return $result;
+   }
+   
+   function http_post($url,$vars=NULL,$auth="",$optar=array()) {
+      global $glob_curlerror_no,$glob_curlerror_msg,$glob_debug;
+      if ($glob_debug) {
+         echo "</center>";
+         echo "URL: $url<br>";
+         print_ar($vars);
+         echo "Auth:$auth<br>";
+      }
+      $ch = curl_init();
+      curl_setopt($ch,CURLOPT_URL,$url);
+      if (!empty($auth)) {
+         curl_setopt($ch, CURLOPT_USERPWD,$auth);
+         curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+      }
+      if ($optar['headerflag']) curl_setopt($ch,CURLOPT_HEADER,1);
+      else curl_setopt($ch,CURLOPT_HEADER,0);
+      curl_setopt($ch,CURLOPT_FOLLOWLOCATION,1);
+      curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+      if ($optar['sslcheck_off']) curl_setopt($ch,CURLOPT_SSL_VERIFYPEER,0);
+      if (!empty($vars) && is_array($vars)) {
+         curl_setopt($ch,CURLOPT_POST, 1);
+         if ($optar['uploadflag'] == 0) {
+            foreach($vars as $fn => $fv) {
+               $postvar .= empty($postvar) ? "" : "&";
+               $postvar .= "$fn=".urlencode($fv);
+            }
+            curl_setopt($ch,CURLOPT_POSTFIELDS,$postvar);
+         }
+         else curl_setopt($ch,CURLOPT_POSTFIELDS,$vars);
+      }
+      $result = curl_exec($ch);
+      $glob_curlerror_no = 0;
+      $glob_curlerror_msg = "";
+      if (curl_errno($ch)) {
+         $glob_curlerror_no = curl_errno($ch) ;
+         $glob_curlerror_msg = curl_error($ch);
+      }
+      curl_close($ch);
+      if ($glob_debug) echo "Returnwert: $result<br>";
       return $result;
    }
    
@@ -170,6 +204,11 @@
           $fval == "0000-00-00 00:00:00" || is_numeric($fval) && $fval == 0.0)
           return true;
       return false;
+   }
+   
+   function utf8_enc($str) {
+      $cstr = mb_convert_encoding($str,"UTF-8","CP1252");
+      return $cstr;
    }
    
 ?>
