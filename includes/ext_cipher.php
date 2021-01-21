@@ -4,37 +4,37 @@ namespace MGVO;
 
 use UnexpectedValueException;
 
+const ENCRYPTIONMETHOD = 'AES-256-CBC';
+
 class Cipher
 {
 
-    private string $sslkey;
+    private $sslkey;
 
     /** @var string Initialization Vector */
-    private string $iv;
+    private $iv;
 
     /** @var int Initialization Vector length */
-    private int $ivlen;
-
-    private const METHOD = 'AES-256-CBC';
+    private $ivlen;
 
     /**
      * @param   string  $textkey  Key zum verschlüsseln
      */
-    public function __construct(string $textkey)
+    public function __construct($textkey)
     {
-        $this->ivlen = openssl_cipher_iv_length(self::METHOD);
+        $this->ivlen = openssl_cipher_iv_length(ENCRYPTIONMETHOD);
         if (false === $this->ivlen) {
-            throw new UnexpectedValueException('Es konnte nicht mit ' . self::METHOD . ' verschlüsselt werden');
+            throw new UnexpectedValueException('Es konnte nicht mit ' . ENCRYPTIONMETHOD . ' verschlüsselt werden');
         }
 
         $str = openssl_random_pseudo_bytes($this->ivlen);
         if (false === $this->ivlen) {
-            throw new UnexpectedValueException('Es konnte nicht mit ' . self::METHOD . ' verschlüsselt werden');
+            throw new UnexpectedValueException('Es konnte nicht mit ' . ENCRYPTIONMETHOD . ' verschlüsselt werden');
         }
 
         $this->iv = substr(hash('sha256', $str), 0, $this->ivlen);
         if (false === $this->iv) {
-            throw new UnexpectedValueException('Es konnte nicht mit ' . self::METHOD . ' verschlüsselt werden');
+            throw new UnexpectedValueException('Es konnte nicht mit ' . ENCRYPTIONMETHOD . ' verschlüsselt werden');
         }
 
         $this->sslkey = hash('sha256', $textkey);
@@ -46,11 +46,11 @@ class Cipher
      *
      * @return string Der verschlüsselte Text
      */
-    public function encrypt(string $input, $base64 = true): string
+    public function encrypt($input, $base64 = true)
     {
         $encrypted = openssl_encrypt(
             $input,
-            self::METHOD,
+            ENCRYPTIONMETHOD,
             $this->sslkey,
             0,
             $this->iv
@@ -67,7 +67,7 @@ class Cipher
      *
      * @return false|string
      */
-    public function decrypt(string $input, $binarymode = false, $nobase64 = false): false|string
+    public function decrypt($input, $binarymode = false, $nobase64 = false)
     {
         if (!$nobase64) {
             $input = base64_decode($input);
@@ -77,7 +77,7 @@ class Cipher
         $input     = substr($input, $this->ivlen);
         $decrypted = openssl_decrypt(
             $input,
-            self::METHOD,
+            ENCRYPTIONMETHOD,
             $this->sslkey,
             0,
             $iv

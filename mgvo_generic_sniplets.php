@@ -52,12 +52,12 @@ class GenericMgvoSniplet extends MgvoSniplet
     public function generateGruppenSniplet(
         array $use_fields_table = ["grubez", "grutxt", "startzeit", "endzeit", "turnus", "ortid", "tridall"],
         array $head_fields_table = ["Gruppenname", "Beschreibung", "Start", "Ende", "Turnus", "Ort", "Trainer"],
-        string|array $sort = null,
-        string|array $filter = null,
+        $sort = null,
+        $filter = null,
         $rewrite_fields = null,
-        int $max_count = 0,
-        int $page = 0
-    ): string {
+        $max_count = 0,
+        $page = 0
+    ) {
         if (count($use_fields_table) !== count($head_fields_table)) {
             return "Anzahl der Felder und Überschriften in mgvo_sniplet_vkal() nicht gleich";
         }
@@ -104,16 +104,16 @@ class GenericMgvoSniplet extends MgvoSniplet
      * @return string
      */
     public function generateVkalSniplet(
-        int $vkalnr,
-        int $seljahr,
+        $vkalnr,
+        $seljahr,
         array $vkal_use_fields_table = ["startdat", "startzeit", "bez", "ort"],
         array $vkal_head_fields_table = ["Datum", "Start", "Veranstaltungen", "ort"],
-        string|array $vkal_sort = null,
-        string|array $vkal_filter = null,
+        $vkal_sort = null,
+        $vkal_filter = null,
         array $vkal_rewrite_fields = null,
-        int $max_count = 0,
-        int $page = 0
-    ): string {
+        $max_count = 0,
+        $page = 0
+    ) {
         if (count($vkal_use_fields_table) !== count($vkal_head_fields_table)) {
             return "Anzahl der Felder und Überschriften in mgvo_sniplet_vkal() nicht gleich";
         }
@@ -158,16 +158,16 @@ class GenericMgvoSniplet extends MgvoSniplet
      */
     public function genericSniplet(
         array $resar,
-        string $css_class,
+        $css_class,
         array $use_fields_table,
         array $head_fields_table,
         array $sanitize_fields_table,
         array $rewrite,
-        string|array|null $sort,
-        string|array $filter,
-        int $max_count,
-        int $page
-    ): string {
+        $sort,
+        $filter,
+        $max_count,
+        $page
+    ) {
         $sniplet = "<div class='mgvo $css_class'>";
         $sniplet .= parent::writeHeadline($resar['headline']);
         $sniplet .= "<table style='border-collapse: collapse; border: 1px'>";
@@ -282,13 +282,13 @@ class GenericMgvoSniplet extends MgvoSniplet
 
 
     public function generateVkalSnipetEntry(
-        int $vkalnr,
-        int $seljahr,
+        $vkalnr,
+        $seljahr,
         $arrayindex,
         $use_fields_table = null,
         $head_fields_table = null,
         $vkal_rewrite_fields = null
-    ): string {
+    ) {
         // Liest den Vereinskalender mit Nr. vkalnr mit Terminen des Jahres seljahr
         // und gibt den Temrin mit der EventID aus.
         // Verfügbare Felder: startdat,bez,prio,vkalnr,evnr,startzeit,enddat,endzeit,
@@ -329,7 +329,7 @@ class GenericMgvoSniplet extends MgvoSniplet
         $arrayindex,
         $use_fields_table = null,
         $head_fields_table = null
-    ): string {
+    ) {
         // Liest den Vereinskalender mit Nr. vkalnr mit Terminen des Jahres seljahr
         // und gibt den Temrin mit der EventID aus.
 
@@ -364,7 +364,7 @@ class GenericMgvoSniplet extends MgvoSniplet
         );
     }
 
-    public function generateEventSnipletEntry($arrayindex, $use_fields_table = null, $head_fields_table = null): string
+    public function generateEventSnipletEntry($arrayindex, $use_fields_table = null, $head_fields_table = null)
     {
         // Liest den Veranstaltungseintrag mit Nr.
 
@@ -403,7 +403,7 @@ class GenericMgvoSniplet extends MgvoSniplet
         $arrayindex,
         $use_fields_table = null,
         $head_fields_table = null
-    ): string {
+    ) {
         // Liest den Veranstaltungseintrag mit Nr.
         // Verfügbare Felder: resdat,starttime,endtime,neustarttime,neuendtime,
         // gruid,abtbez,normbelegung,ortsbez,reservierungsgrund
@@ -444,7 +444,7 @@ class GenericMgvoSniplet extends MgvoSniplet
         $head_fields_table,
         $sanitize_fields_table,
         $rewrite
-    ): string {
+    ) {
         $sniplet = "<div class='mgvo $css_class'>";
         $sniplet .= parent::writeHeadline($resar['headline']);
         $sniplet .= "<table style='border-collapse: collapse; border: 1px'>";

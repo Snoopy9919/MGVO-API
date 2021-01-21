@@ -11,9 +11,9 @@ namespace MGVO;
 class MgvoSniplet
 {
 
-    protected MgvoAPI $api;
+    protected $api;
 
-    protected string $headline;
+    protected $headline;
 
     public function __construct($call_id, $vcryptkey, $cachemin)
     {
@@ -35,7 +35,7 @@ class MgvoSniplet
         $this->headline = $headline;
     }
 
-    public function writeHeadline($mgvo_headline = ""): string
+    public function writeHeadline($mgvo_headline = "")
     {
         $headline = empty($this->headline) ? $mgvo_headline : $this->headline;
         return "<h2>$headline</h2>";
@@ -49,7 +49,7 @@ class MgvoSniplet
      *
      * @return string
      */
-    public function vkalSniplet(int $vkalnr, int $seljahr): string
+    public function vkalSniplet($vkalnr, $seljahr)
     {
         $resar = $this->api->readVkal($vkalnr, $seljahr);
         $sniplet = "<div class='mgvo mgvo-vkal'>";
@@ -65,7 +65,7 @@ class MgvoSniplet
             $sniplet .= "<td>$vkr[startzeit]</td>";
             $sniplet .= "<td>" . date2user($vkr['enddat']) . "</td>";
             $sniplet .= "<td>$vkr[endzeit]</td>";
-            $sniplet .= "<td>" . ($vkr['ort'] ?? "") . "</td>";
+            $sniplet .= "<td>" . ($vkr['ort'] ?: "") . "</td>";
             $sniplet .= "</tr>";
         }
         $sniplet .= "</table>";
@@ -73,7 +73,7 @@ class MgvoSniplet
         return $sniplet;
     }
 
-    public function orteSniplet(): string
+    public function orteSniplet()
     {
         // Liest die Ortsliste ein
         $resar = $this->api->readOrte();
@@ -96,7 +96,7 @@ class MgvoSniplet
         return $sniplet;
     }
 
-    public function betreuerSniplet(): string
+    public function betreuerSniplet()
     {
         // Liest die Betreuer ein
         $resar = $this->api->readBetreuer();
@@ -117,7 +117,7 @@ class MgvoSniplet
         return $sniplet;
     }
 
-    public function eventsSniplet(): string
+    public function eventsSniplet()
     {
         // Liest die öffentlichen Veranstaltungen
         $resar = $this->api->readEvents();
@@ -138,7 +138,7 @@ class MgvoSniplet
             $sniplet .= "<td>$or[name]</td>";
             $sniplet .= "<td>$or[description]</td>";
             $sniplet .= "<td>$or[ort]</td>";
-            $sniplet .= "<td>" . date2user($or['startdate'] ?? "") . "</td>";
+            $sniplet .= "<td>" . date2user($or['startdate'] ?: "") . "</td>";
             $sniplet .= "<td>$or[starttime]</td>";
             if (!empty($or['besturl'])) {
                 $sniplet .= "<td><a href='$or[besturl]' target=_blank>Bestell-URL</a></td>";
@@ -152,7 +152,7 @@ class MgvoSniplet
         return $sniplet;
     }
 
-    public function gruppenSniplet(): string
+    public function gruppenSniplet()
     {
         $resar = $this->api->readGruppen();
 
@@ -177,7 +177,7 @@ class MgvoSniplet
         return $sniplet;
     }
 
-    public function abteilungenSniplet(): string
+    public function abteilungenSniplet()
     {
         $resar = $this->api->readAbt();
 
@@ -201,7 +201,7 @@ class MgvoSniplet
         return $sniplet;
     }
 
-    public function trainingFailSniplet(): string
+    public function trainingFailSniplet()
     {
         $resar = $this->api->readTrainingFail();
 
@@ -232,8 +232,8 @@ class MgvoSniplet
                 $sniplet .= "<td></td>";
             }
 
-            $sniplet .= "<td>" . ($tfr['neuzeithtml'] ?? "") . "</td>";
-            $sniplet .= "<td>" . ($tfr['neuorthtml'] ?? "") . "</td>";
+            $sniplet .= "<td>" . ($tfr['neuzeithtml'] ?: "") . "</td>";
+            $sniplet .= "<td>" . ($tfr['neuorthtml'] ?: "") . "</td>";
             $sniplet .= "<td>$tfr[ebez]</td>";
             $sniplet .= "</tr>";
         }
@@ -242,7 +242,7 @@ class MgvoSniplet
         return $sniplet;
     }
 
-    public function readMitgliederSniplet($selparar = null): string
+    public function readMitgliederSniplet($selparar = null)
     {
         // Selektion von Mitgliedern.
         $resar   = $this->api->readMitglieder($selparar);
@@ -283,7 +283,7 @@ class MgvoSniplet
      *
      * @return string
      */
-    public function showMitgliederSniplet(int $mgnr): string
+    public function showMitgliederSniplet($mgnr)
     {
         $mr      = $this->api->showMitglied($mgnr);
         $sniplet = "<div class='mgvo mgvo-mitglieder'>";
@@ -297,7 +297,7 @@ class MgvoSniplet
         return $sniplet;
     }
 
-    public function listDocumentsSniplet($dokart = null): string
+    public function listDocumentsSniplet($dokart = null)
     {
         $resar   = $this->api->listDocuments($dokart);
         $sniplet = "<div class='mgvo mgvo-documents'>";
@@ -337,7 +337,4 @@ class MgvoSniplet
 
         echo $content;
     }
-
-
-
 }

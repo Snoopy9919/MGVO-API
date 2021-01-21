@@ -2,7 +2,6 @@
 
 namespace MGVO;
 
-use JetBrains\PhpStorm\ArrayShape;
 use SimpleXMLElement;
 
 const MGVO_DEBUG_ERR      = 0b1;         // Allg. Fehlerausgaben
@@ -14,25 +13,25 @@ class MgvoAPI
 {
 
     /** @var string Identifikation des Vereins */
-    private string $call_id;
+    private $call_id;
 
     /** @var string Schlüssel für die synchrone Verschlüsselung. Wird in MGVO in den technischen Parametern eingetragen */
-    private string $vcryptkey;
+    private $vcryptkey;
 
     /** @var string call_id verschlüsslt mit vcryptkey */
-    private string $callidc;
+    private $callidc;
 
     /** @var string immer auf "https://www.mgvo.de/prog" gesetzt */
-    private string $urlroot;
+    private $urlroot;
 
     /** @var int Beim readen -> 1, beim login -> 0 */
-    private int $cacheon;
+    private $cacheon;
 
     /** @var int Legt die Cachezeit in Minuten fest. Wenn nicht angegeben, werden 5 Minuten gesetzt */
-    private int $cachetime;
+    private $cachetime;
 
     /** @var int Legt das debuglevel dieser API fest */
-    private int $debuglevel;
+    private $debuglevel;
 
 
     /**
@@ -41,7 +40,7 @@ class MgvoAPI
      *                              Parametern eingetragen
      * @param   int     $cachetime  Legt die Cachezeit in Minuten fest. Wenn nicht angegeben, werden 5 Minuten gesetzt
      */
-    public function __construct(string $call_id, string $vcryptkey = "", int $cachetime = 5)
+    public function __construct($call_id, $vcryptkey = "", $cachetime = 5)
     {
         $this->call_id   = $call_id;
         $this->vcryptkey = $vcryptkey;
@@ -59,7 +58,7 @@ class MgvoAPI
      *
      * @param   int  $debuglevel
      */
-    public function setDebuglevel(int $debuglevel)
+    public function setDebuglevel($debuglevel)
     {
         $this->debuglevel = $debuglevel;
     }
@@ -71,7 +70,7 @@ class MgvoAPI
      * @param   mixed   $lv
      * @param   int     $dtyp     Debugtype
      */
-    private function log(string $comment, mixed $lv, int $dtyp)
+    private function log($comment, $lv, $dtyp)
     {
 
         if ($dtyp && $this->debuglevel == 0) {
@@ -100,7 +99,7 @@ class MgvoAPI
      *
      * @return false|string returned einen XML String oder false, falls es einen error gab
      */
-    private function httpGetCached(string $url, array $paras): false|string
+    private function httpGetCached($url, array $paras)
     {
         $filename   = pathinfo(parse_url($url)['path'], PATHINFO_FILENAME);
         $parasquery = http_build_query($paras);
@@ -138,20 +137,13 @@ class MgvoAPI
      *
      * @return false|SimpleXMLElement
      */
-    #[ArrayShape(
-        [
-            'headline' => "string",
-            'verein'   => "string",
-            'version'  => "string",
-            'objar'    => "array"]
-    )]
-    private function xml2table(string $url, array $paras, string $objname): false|array
+    private function xml2table($url, array $paras, $objname)
     {
         $xml = simplexml_load_string($this->httpGetCached($url, $paras));
         $this->log("Aus XML erzeugtes SimpleXMLElement", $xml, MGVO_DEBUG_XML);
 
-        $objfieldlist = $xml->objfieldlist ?? "";//liste aller keys, die das object(array) haben sollte
-        $xmlObj       = $xml->{$objname} ?? null;
+        $objfieldlist = $xml->objfieldlist ?: "";//liste aller keys, die das object(array) haben sollte
+        $xmlObj       = $xml->{$objname} ?: null;
 
         $fieldnames = explode(",", $objfieldlist);
         $resArr     = [];
@@ -163,9 +155,9 @@ class MgvoAPI
             $resArr[] = $currentArr;
         }
         $ergar = [
-            'headline' => $xml->headline ?? "",
-            'verein'   => $xml->verein ?? "",
-            'version'  => $xml->version ?? "",
+            'headline' => $xml->headline ?: "",
+            'verein'   => $xml->verein ?: "",
+            'version'  => $xml->version ?: "",
             'objar'    => $resArr];
         $this->log("Ergebnistabelle", $ergar, MGVO_DEBUG_ERG);
         return $ergar;
@@ -180,12 +172,7 @@ class MgvoAPI
      *
      * @return array
      */
-    #[ArrayShape([
-        'headline' => "string",
-        'verein'   => "string",
-        'version'  => "string",
-        'objar'    => "array"])]
-    public function readVkal(int $vkalnr, int $seljahr): array
+    public function readVkal($vkalnr, $seljahr)
     {
         $this->cacheon = 1;
         $paras         = [
@@ -201,12 +188,7 @@ class MgvoAPI
      *
      * @return array
      */
-    #[ArrayShape([
-        'headline' => "string",
-        'verein'   => "string",
-        'version'  => "string",
-        'objar'    => "array"])]
-    public function readOrte(): array
+    public function readOrte()
     {
         $this->cacheon = 1;
         $paras         = ['call_id' => $this->call_id];
@@ -219,12 +201,7 @@ class MgvoAPI
      *
      * @return array
      */
-    #[ArrayShape([
-        'headline' => "string",
-        'verein'   => "string",
-        'version'  => "string",
-        'objar'    => "array"])]
-    public function readBetreuer(): array
+    public function readBetreuer()
     {
         $this->cacheon = 1;
         $paras         = ['call_id' => $this->call_id];
@@ -237,12 +214,7 @@ class MgvoAPI
      *
      * @return array
      */
-    #[ArrayShape([
-        'headline' => "string",
-        'verein'   => "string",
-        'version'  => "string",
-        'objar'    => "array"])]
-    public function readEvents(): array
+    public function readEvents()
     {
         $this->cacheon = 1;
         $paras         = ['call_id' => $this->call_id];
@@ -255,12 +227,7 @@ class MgvoAPI
      *
      * @return array
      */
-    #[ArrayShape([
-        'headline' => "string",
-        'verein'   => "string",
-        'version'  => "string",
-        'objar'    => "array"])]
-    public function readGruppen(): array
+    public function readGruppen()
     {
         $this->cacheon = 1;
         $paras         = ['call_id' => $this->call_id];
@@ -273,12 +240,7 @@ class MgvoAPI
      *
      * @return array
      */
-    #[ArrayShape([
-        'headline' => "string",
-        'verein'   => "string",
-        'version'  => "string",
-        'objar'    => "array"])]
-    public function readAbt(): array
+    public function readAbt()
     {
         $this->cacheon = 1;
         $paras         = ['call_id' => $this->call_id];
@@ -291,12 +253,7 @@ class MgvoAPI
      *
      * @return array
      */
-    #[ArrayShape([
-        'headline' => "string",
-        'verein'   => "string",
-        'version'  => "string",
-        'objar'    => "array"])]
-    public function readTrainingFail(): array
+    public function readTrainingFail()
     {
         $this->cacheon = 1;
         $paras         = ['call_id' => $this->call_id];
@@ -326,12 +283,7 @@ class MgvoAPI
      *
      * @return array
      */
-    #[ArrayShape([
-        'headline' => "string",
-        'verein'   => "string",
-        'version'  => "string",
-        'objar'    => "array"])]
-    public function readMitglieder(array $selparar): array
+    public function readMitglieder(array $selparar)
     {
         $cipher = new Cipher($this->vcryptkey);                         // Initialisierung der Verschlüsselung
 
@@ -351,7 +303,7 @@ class MgvoAPI
      *
      * @return mixed
      */
-    public function showMitglied(int $mgnr): mixed
+    public function showMitglied($mgnr)
     {
         return $this->readMitglieder(['suchbeg' => $mgnr])['objar'][0];
     }
@@ -364,12 +316,7 @@ class MgvoAPI
      *
      * @return array
      */
-    #[ArrayShape([
-        'headline' => "string",
-        'verein'   => "string",
-        'version'  => "string",
-        'objar'    => "array"])]
-    public function getMitpict(int $mgnr): array
+    public function getMitpict($mgnr)
     {
         $cipher = new Cipher($this->vcryptkey);                         // Initialisierung der Verschlüsselung
 
@@ -395,12 +342,7 @@ class MgvoAPI
      *
      * @return array
      */
-    #[ArrayShape([
-        'headline' => "string",
-        'verein'   => "string",
-        'version'  => "string",
-        'objar'    => "array"])]
-    public function listDocuments($dokart = null): array
+    public function listDocuments($dokart = null)
     {
         $this->cacheon = 1;
         $paras         = [
@@ -427,7 +369,7 @@ class MgvoAPI
      *
      * @return int
      */
-    public function login(int $email_id, string $passwd, string $pis, $smscode): int
+    public function login($email_id, $passwd, $pis, $smscode)
     {
         // Der Personal Identity String (PIS) wird durch Aufruf der Javascript-Funktion "get_browserpis"
         // erzeugt und muss an den Login übergeben werden, wenn eine Zwei-Faktor-Authentifizierung genutzt werden soll.
@@ -459,7 +401,7 @@ class MgvoAPI
      *
      * @return array
      */
-    public function createMitstamm(mixed $inar): array
+    public function createMitstamm($inar)
     {
         $paras = [
             'call_id' => $this->call_id,

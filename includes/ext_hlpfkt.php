@@ -2,8 +2,6 @@
 
 namespace MGVO;
 
-use JetBrains\PhpStorm\Pure;
-
 // Hilfsfunktionen
 /**
  * @param        $ipadr
@@ -36,7 +34,7 @@ function localecho($ipadr, $out, $t = 0)
  *
  * @return mixed
  */
-function saveassign(array $arr, string $idx, array|string $initval): mixed
+function saveassign(array $arr, $idx, $initval)
 {
     if (isset($arr[$idx])) {
         return $arr[$idx];
@@ -52,7 +50,7 @@ function saveassign(array $arr, string $idx, array|string $initval): mixed
  *
  * @return array|null
  */
-function prep_ar(array|null $ar): array|null
+function prep_ar($ar)
 {
     if ($ar === null) {
         return null;
@@ -88,7 +86,7 @@ function print_ar(array $ar)
  *
  * @return false|string the result or false on error
  */
-function http_get1(string $url, $auth = ""): false|string
+function http_get1($url, $auth = "")
 {
     global $glob_debug, $glob_curlerror_no, $glob_curlerror_msg;
     if ($glob_debug) {
@@ -144,7 +142,7 @@ function http_get1(string $url, $auth = ""): false|string
  *
  * @return false|string the result or false on error
  */
-function http_post(string $url, $vars = null, $auth = "", $optar = []): false|string
+function http_post($url, $vars = null, $auth = "", $optar = [])
 {
     global $glob_curlerror_no, $glob_curlerror_msg, $glob_debug;
     if ($glob_debug) {
@@ -192,14 +190,12 @@ function http_post(string $url, $vars = null, $auth = "", $optar = []): false|st
     return $result;
 }
 
-#[Pure]
-function calc_fingerprint(string $pis): string
+function calc_fingerprint($pis)
 {
     return hash("sha256", $_SERVER['HTTP_USER_AGENT'] . $_SERVER['HTTP_ACCEPT'] . $pis);
 }
 
-#[Pure]
-function date2user(string $db_datum, int $typ = 1): string
+function date2user($db_datum, $typ = 1)
 {
     if ($db_datum == "" || $db_datum == "0000-00-00" || strlen($db_datum) < 4) {
         return "";
@@ -232,7 +228,7 @@ function date2user(string $db_datum, int $typ = 1): string
     }
 }
 
-function time2user(string $time): string
+function time2user($time)
 {
     if ($time == "") {
         return "";
@@ -245,8 +241,7 @@ function time2user(string $time): string
     return $usertime;
 }
 
-#[Pure]
-function emptyval(mixed $fval): bool
+function emptyval($fval)
 {
     return empty($fval) ||
       $fval == "0000-00-00" ||
