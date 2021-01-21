@@ -2,8 +2,6 @@
 
 namespace MGVO;
 
-use SimpleXMLElement;
-
 const MGVO_DEBUG_ERR      = 0b1;         // Allg. Fehlerausgaben
 const MGVO_DEBUG_DATA     = 0b10;        // XML-Ergebnis vom Aufruf
 const MGVO_DEBUG_XML      = 0b100;         // Array nach XML-Konvertierung
@@ -135,7 +133,7 @@ class MgvoAPI
      * @param   array   $paras    Die übergebenen Queryparameter als array
      * @param   string  $objname  Der Name der auszugebenden Tabelle
      *
-     * @return false|SimpleXMLElement
+     * @return array
      */
     private function xml2table($url, array $paras, $objname)
     {
@@ -150,7 +148,7 @@ class MgvoAPI
         foreach ($xmlObj as $key => $value) {
             $currentArr = [];
             foreach ($fieldnames as $fieldname) {
-                $currentArr[$fieldname] = (string) $value->{$fieldname} ?? "";
+                $currentArr[$fieldname] = (string) $value->{$fieldname} ?: "";
             }
             $resArr[] = $currentArr;
         }
