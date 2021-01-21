@@ -227,13 +227,14 @@ class GenericMgvoSniplet extends MgvoSniplet
                 }
             }
 
-            if ($count !== 0 &&  // keine Anzahl angegeben
-              (
-                  !($count > $max_count && $page === 0)
-                // keine Seite angeben, aktuelle Anzahl größer Max_Count
-                || !(($count * $page <= $max_count) &&
+            if (
+                $count !== 0 &&  // keine Anzahl angegeben
+                (
+                  !($count > $max_count && $page === 0) ||
+                  // keine Seite angeben, aktuelle Anzahl größer Max_Count
+                  !(($count * $page <= $max_count) &&
                   !(($count * ($page + 1)) <= $max_count))  // nicht auf der aktuellen Seite
-              )
+                )
             ) {
                 $count++;
                 continue;
@@ -306,7 +307,7 @@ class GenericMgvoSniplet extends MgvoSniplet
             return "Anzahl der Felder und Überschriften in mgvo_sniplet_vkal_entry() nicht gleich";
         }
         if (empty($vkal_rewrite_fields)) { // Überschreiben von Feldern
-            $vkal_rewrite_fields = array('starzeit' => 'resstime', 'endzeit' => 'resetime', 'startdat' => 'ressdat');
+            $vkal_rewrite_fields = ['starzeit' => 'resstime', 'endzeit' => 'resetime', 'startdat' => 'ressdat'];
         }
 
         $sanitize_fields_table = explode(",", "startdat,startzeit,enddat,endzeit");

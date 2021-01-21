@@ -109,10 +109,12 @@ class MgvoAPI
             file_get_contents("$this->urlroot/$url?$parasquery");
 
         // Prüfen, ob der Aufruf erfolgreich war
-        if (empty($ret) ||
+        if (
+            empty($ret) ||
             str_contains($ret, "Nicht erlaubt!") ||
             str_contains($ret, "Sicherheitsversto") ||
-           !str_contains($ret, "DOCTYPE xml")) {
+            !str_contains($ret, "DOCTYPE xml")
+        ) {
             $this->log("XML nicht korrekt geladen", $ret, MGVO_DEBUG_ERR);
             return false;
         }
