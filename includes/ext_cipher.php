@@ -1,73 +1,92 @@
 <?php
 
-class Cipher {
+namespace MGVO;
 
-	/** @var string */
-	private string $sslkey;
+use UnexpectedValueException;
 
-	/** @var false|string Initialization Vector (kann false sein) */
-	private false|string $iv;
+class Cipher
+{
 
-	/** @var false|int Initialization Vector length (kann false sein) */
-	private false|int $ivlen;
+    private string $sslkey;
 
-	const method = "AES-256-CBC";
+    /** @var string Initialization Vector */
+    private string $iv;
 
-	/**
-	 * @param   string  $textkey  Key zum verschlüsseln
-	 */
-	function __construct(string $textkey) {
-		$this->ivlen  = openssl_cipher_iv_length(self::method);
-		$str          = openssl_random_pseudo_bytes($this->ivlen);
-		$this->iv     = substr(hash('sha256', $str), 0, $this->ivlen);
-		$this->sslkey = hash('sha256', $textkey);
-	}
+    /** @var int Initialization Vector length */
+    private int $ivlen;
 
-	/**
-	 * @param   string  $input     der zu verschlüsselnde Text
-	 * @param   bool    $base64  false um nicht base64 zu encoden
-	 *
-	 * @return string Der verschlüsselte Text
-	 */
-	function encrypt(string $input, $base64 = true): string {
-		$encrypted = openssl_encrypt(
-		  $input,
-		  self::method,
-		  $this->sslkey,
-		  0,
-		  $this->iv
-		);
-		$encrypted = $this->iv . $encrypted;
-		return $base64 ? base64_encode($encrypted) : $encrypted;
-	}
+    private const METHOD = 'AES-256-CBC';
 
+    /**
+     * @param   string  $textkey  Key zum verschlüsseln
+     */
+    public function __construct(string $textkey)
+    {
+        $this->ivlen = openssl_cipher_iv_length(self::METHOD);
+        if (false === $this->ivlen) {
+            throw new UnexpectedValueException('Es konnte nicht mit ' . self::METHOD . ' verschlüsselt werden');
+        }
 
-	/**
-	 * @param   string  $input     Der zu entschlüsselde Text
-	 * @param   bool    $binarymode
-	 * @param   bool    $nobase64  ist der input in base 64 encoded?
-	 *
-	 * @return false|string
-	 */
-	function decrypt(string $input, $binarymode = false, $nobase64 = false): false|string {
-		if (!$nobase64)
-			$input = base64_decode($input);
+        $str = openssl_random_pseudo_bytes($this->ivlen);
+        if (false === $this->ivlen) {
+            throw new UnexpectedValueException('Es konnte nicht mit ' . self::METHOD . ' verschlüsselt werden');
+        }
 
-		$iv        = substr($input, 0, $this->ivlen);
-		$input     = substr($input, $this->ivlen);
-		$decrypted = openssl_decrypt(
-		  $input,
-		  self::method,
-		  $this->sslkey,
-		  0,
-		  $iv
-		);
+        $this->iv = substr(hash('sha256', $str), 0, $this->ivlen);
+        if (false === $this->iv) {
+            throw new UnexpectedValueException('Es konnte nicht mit ' . self::METHOD . ' verschlüsselt werden');
+        }
 
-		if (!$binarymode)
-			$decrypted = rtrim($decrypted, "\0");
+        $this->sslkey = hash('sha256', $textkey);
+    }
 
-		return $decrypted;
-	}
+    /**
+     * @param   string  $input   der zu verschlüsselnde Text
+     * @param   bool    $base64  false um nicht base64 zu encoden
+     *
+     * @return string Der verschlüsselte Text
+     */
+    public function encrypt(string $input, $base64 = true): string
+    {
+        $encrypted = openssl_encrypt(
+            $input,
+            self::METHOD,
+            $this->sslkey,
+            0,
+            $this->iv
+        );
+        $encrypted = $this->iv . $encrypted;
 
+        return $base64 ? base64_encode($encrypted) : $encrypted;
+    }
+
+    /**
+     * @param   string  $input     Der zu entschlüsselde Text
+     * @param   bool    $binarymode
+     * @param   bool    $nobase64  ist der input in base 64 encoded?
+     *
+     * @return false|string
+     */
+    public function decrypt(string $input, $binarymode = false, $nobase64 = false): false|string
+    {
+        if (!$nobase64) {
+            $input = base64_decode($input);
+        }
+
+        $iv        = substr($input, 0, $this->ivlen);
+        $input     = substr($input, $this->ivlen);
+        $decrypted = openssl_decrypt(
+            $input,
+            self::METHOD,
+            $this->sslkey,
+            0,
+            $iv
+        );
+
+        if (!$binarymode) {
+            $decrypted = rtrim($decrypted, "\0");
+        }
+
+        return $decrypted;
+    }
 }
-

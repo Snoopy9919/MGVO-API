@@ -1,38 +1,28 @@
 <?php
+
+namespace MGVO;
+
 use JetBrains\PhpStorm\Pure;
 
 // Hilfsfunktionen
-
-// Werte für mgvo_debug:
-
-
-const MGVO_DEBUG_ERR      = 0b1;         // Allg. Fehlerausgaben
-const MGVO_DEBUG_DATA     = 0b10;        // XML-Ergebnis vom Aufruf
-const MGVO_DEBUG_XML      = 0b100;         // Array nach XML-Konvertierung
-const MGVO_DEBUG_XMLTRANS = 0b1000;    // Schritte der XML-Konvertierung
-const MGVO_DEBUG_ERG      = 0b10000;        // Ergebnisarray vor Übergabe an Sniplet-Funktionen
-
-
 /**
  * @param        $ipadr
  * @param        $out
  * @param   int  $t
  */
-function localecho($ipadr, $out, $t = 0) {
-	if ($_ENV['REMOTE_ADDR'] == $ipadr) {
-		if (is_array($out))
-			print_ar($out);
-		else
-			echo $out . "<br>";
-	}
-	flush();
-	if (!empty($t))
-		sleep($t);
-}
-
-#[Pure]
-function utf8_dec(string $str): string {
-	return mb_convert_encoding($str, "CP1252", "UTF-8");
+function localecho($ipadr, $out, $t = 0)
+{
+    if ($_ENV['REMOTE_ADDR'] == $ipadr) {
+        if (is_array($out)) {
+            print_ar($out);
+        } else {
+            echo $out . "<br>";
+        }
+    }
+    flush();
+    if (!empty($t)) {
+        sleep($t);
+    }
 }
 
 /**
@@ -46,31 +36,37 @@ function utf8_dec(string $str): string {
  *
  * @return mixed
  */
-function saveassign(array $arr, string $idx, array|string $initval): mixed {
-	if (isset($arr[$idx]))
-		return $arr[$idx];
-	else
-		return $initval;
+function saveassign(array $arr, string $idx, array|string $initval): mixed
+{
+    if (isset($arr[$idx])) {
+        return $arr[$idx];
+    } else {
+        return $initval;
+    }
 }
 
 /**
  * Goes through every array in the $ar recursively and converts them to HTML Entities?
  *
- * @param   array|mixed  $ar
+ * @param   array|null  $ar
  *
- * @return array|mixed
+ * @return array|null
  */
-function prep_ar(array $ar): array|null {
-	if ($ar === NULL)
-		return NULL;
+function prep_ar(array|null $ar): array|null
+{
+    if ($ar === null) {
+        return null;
+    }
 
-	foreach ($ar as $key => $value) {
-		if (is_array($value))
-			prep_ar($value);
-		else $ar[$key] = htmlentities($value);
-	}
+    foreach ($ar as $key => $value) {
+        if (is_array($value)) {
+            prep_ar($value);
+        } else {
+            $ar[$key] = htmlentities($value);
+        }
+    }
 
-	return $ar;
+    return $ar;
 }
 
 /**
@@ -78,11 +74,12 @@ function prep_ar(array $ar): array|null {
  *
  * @param   array  $ar
  */
-function print_ar(array $ar) {
-	echo "<pre>";
-	$ar = prep_ar($ar);
-	print_r($ar);
-	echo "</pre>";
+function print_ar(array $ar)
+{
+    echo "<pre>";
+    $ar = prep_ar($ar);
+    print_r($ar);
+    echo "</pre>";
 }
 
 /**
@@ -91,50 +88,52 @@ function print_ar(array $ar) {
  *
  * @return false|string the result or false on error
  */
-function http_get1(string $url, $auth = ""): false|string {
-	global $glob_debug, $glob_curlerror_no, $glob_curlerror_msg;
-	if ($glob_debug) {
-		echo "</center>";
-		echo "URL: $url<br>";
-		echo "Auth:$auth<br>\n";
-	}
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, $url);
-	if (!empty($auth)) {
-		curl_setopt($ch, CURLOPT_USERPWD, $auth);
-		curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-	}
-	curl_setopt($ch, CURLOPT_HEADER, 0);
-	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-	//if (isset($optar['sslcheck_off']))
-	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-	if ($glob_debug) {
-		//curl_setopt($ch, CURLOPT_HEADER, 1);
-		curl_setopt($ch, CURLINFO_HEADER_OUT, true);
-		curl_setopt($ch, CURLOPT_VERBOSE, 1);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-	}
-	$result             = curl_exec($ch);
-	$glob_curlerror_no  = 0;
-	$glob_curlerror_msg = "";
-	if (curl_errno($ch)) {
-		$glob_curlerror_no  = curl_errno($ch);
-		$glob_curlerror_msg = curl_error($ch);
-		if ($glob_debug) {
-			echo "FehlerNr.: $glob_curlerror_no Fehler: $glob_curlerror_msg<br>";
-			echo "HTTP-Code: " . curl_getinfo($ch, CURLINFO_HTTP_CODE) . "<br>";
-			echo "Lookup-Time: " . curl_getinfo($ch, CURLINFO_NAMELOOKUP_TIME) . "<br>";
-			echo "Connect-Time: " . curl_getinfo($ch, CURLINFO_CONNECT_TIME) . "<br>";
-			echo "Primary Port: " . curl_getinfo($ch, CURLINFO_PRIMARY_PORT) . "<br>";
-			echo "Header Size: " . curl_getinfo($ch, CURLINFO_HEADER_SIZE) . "<br>";
-			echo "SSL Verify Result: " . curl_getinfo($ch, CURLINFO_SSL_VERIFYRESULT) . "<br>";
-		}
-	}
-	curl_close($ch);
-	if ($glob_debug)
-		echo "Returnwert: $result<br><br>";
-	return $result;
+function http_get1(string $url, $auth = ""): false|string
+{
+    global $glob_debug, $glob_curlerror_no, $glob_curlerror_msg;
+    if ($glob_debug) {
+        echo "</center>";
+        echo "URL: $url<br>";
+        echo "Auth:$auth<br>\n";
+    }
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    if (!empty($auth)) {
+        curl_setopt($ch, CURLOPT_USERPWD, $auth);
+        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+    }
+    curl_setopt($ch, CURLOPT_HEADER, 0);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    //if (isset($optar['sslcheck_off']))
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+    if ($glob_debug) {
+        //curl_setopt($ch, CURLOPT_HEADER, 1);
+        curl_setopt($ch, CURLINFO_HEADER_OUT, true);
+        curl_setopt($ch, CURLOPT_VERBOSE, 1);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+    }
+    $result             = curl_exec($ch);
+    $glob_curlerror_no  = 0;
+    $glob_curlerror_msg = "";
+    if (curl_errno($ch)) {
+        $glob_curlerror_no  = curl_errno($ch);
+        $glob_curlerror_msg = curl_error($ch);
+        if ($glob_debug) {
+            echo "FehlerNr.: $glob_curlerror_no Fehler: $glob_curlerror_msg<br>";
+            echo "HTTP-Code: " . curl_getinfo($ch, CURLINFO_HTTP_CODE) . "<br>";
+            echo "Lookup-Time: " . curl_getinfo($ch, CURLINFO_NAMELOOKUP_TIME) . "<br>";
+            echo "Connect-Time: " . curl_getinfo($ch, CURLINFO_CONNECT_TIME) . "<br>";
+            echo "Primary Port: " . curl_getinfo($ch, CURLINFO_PRIMARY_PORT) . "<br>";
+            echo "Header Size: " . curl_getinfo($ch, CURLINFO_HEADER_SIZE) . "<br>";
+            echo "SSL Verify Result: " . curl_getinfo($ch, CURLINFO_SSL_VERIFYRESULT) . "<br>";
+        }
+    }
+    curl_close($ch);
+    if ($glob_debug) {
+        echo "Returnwert: $result<br><br>";
+    }
+    return $result;
 }
 
 /**
@@ -145,115 +144,114 @@ function http_get1(string $url, $auth = ""): false|string {
  *
  * @return false|string the result or false on error
  */
-function http_post(string $url, $vars = NULL, $auth = "", $optar = []): false|string {
-	echo $url;
-	global $glob_curlerror_no, $glob_curlerror_msg, $glob_debug;
-	if ($glob_debug) {
-		echo "</center>";
-		echo "URL: $url<br>";
-		print_ar($vars);
-		echo "Auth: $auth<br>";
-	}
-	$ch = curl_init($url);
-	if (!empty($auth)) {
-		curl_setopt($ch, CURLOPT_USERPWD, $auth);
-		curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-	}
-	if (isset($optar['headerflag']))
-		curl_setopt($ch, CURLOPT_HEADER, true);
-	else
-		curl_setopt($ch, CURLOPT_HEADER, false);
-	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	//if (isset($optar['sslcheck_off']))
-	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-	if (!empty($vars) && is_array($vars)) {
-		curl_setopt($ch, CURLOPT_POST, true);
-		if (isset($optar['uploadflag']) && $optar['uploadflag'] == 0) {
-			$postvar = http_build_query($vars);
-			curl_setopt($ch, CURLOPT_POSTFIELDS, $postvar);
-		} else
-			curl_setopt($ch, CURLOPT_POSTFIELDS, $vars);
-	}
-	$result             = curl_exec($ch);
+function http_post(string $url, $vars = null, $auth = "", $optar = []): false|string
+{
+    global $glob_curlerror_no, $glob_curlerror_msg, $glob_debug;
+    if ($glob_debug) {
+        echo "</center>";
+        echo "URL: $url<br>";
+        print_ar($vars);
+        echo "Auth: $auth<br>";
+    }
+    $ch = curl_init($url);
+    if (!empty($auth)) {
+        curl_setopt($ch, CURLOPT_USERPWD, $auth);
+        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+    }
+    if (isset($optar['headerflag'])) {
+        curl_setopt($ch, CURLOPT_HEADER, true);
+    } else {
+        curl_setopt($ch, CURLOPT_HEADER, false);
+    }
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    //if (isset($optar['sslcheck_off']))
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    if (!empty($vars) && is_array($vars)) {
+        curl_setopt($ch, CURLOPT_POST, true);
+        if (isset($optar['uploadflag']) && $optar['uploadflag'] == 0) {
+            $postvar = http_build_query($vars);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $postvar);
+        } else {
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $vars);
+        }
+    }
+    $result = curl_exec($ch);
 
-	$glob_curlerror_no  = 0;
-	$glob_curlerror_msg = "";
-	if (curl_errno($ch)) {
-		$glob_curlerror_no  = curl_errno($ch);
-		$glob_curlerror_msg = curl_error($ch);
-	}
-	curl_close($ch);
-	if ($glob_debug)
-		echo "Returnwert: $result<br>";
+    $glob_curlerror_no  = 0;
+    $glob_curlerror_msg = "";
+    if (curl_errno($ch)) {
+        $glob_curlerror_no  = curl_errno($ch);
+        $glob_curlerror_msg = curl_error($ch);
+    }
+    curl_close($ch);
+    if ($glob_debug) {
+        echo "Returnwert: $result<br>";
+    }
 
-	return $result;
+    return $result;
 }
 
 #[Pure]
-function calc_fingerprint(string $pis): string {
-	return hash("sha256", $_SERVER['HTTP_USER_AGENT'] . $_SERVER['HTTP_ACCEPT'] . $pis);
-}
-
-/**
- * @param   string  $db_datum
- * @param   int     $typ
- *
- * @return string
- */
-#[Pure]
-function date2user(string $db_datum, int $typ = 1): string {
-	if ($db_datum == "" || $db_datum == "0000-00-00" || strlen($db_datum) < 4)
-		return "";
-	$year  = substr($db_datum, 0, 4);
-	$syear = substr($db_datum, 2, 2);
-	$month = substr($db_datum, 5, 2);
-	$day   = substr($db_datum, 8, 2);
-	switch ($typ) {
-		case 1:
-			return "$day.$month.$year";  // 03.07.2005
-		case 3:
-			return "$day.$month.$syear"; // 03.07.05
-		case 4:
-			return "$day.$month.";  // 03.07.
-		case 5:
-			$day   = (int) $day;        // 3.7.
-			$month = (int) $month;
-			return "$day.$month.";
-		case 6:
-			$day   = (int) $day;        // 3.7.2005
-			$month = (int) $month;
-			return "$day.$month.$year";
-		case 7:
-			$day   = (int) $day;        // 3.7.05
-			$month = (int) $month;
-			return "$day.$month.$syear";
-		default:
-			return "";
-	}
-}
-
-function time2user(string $time): string {
-	if ($time == "")
-		return "";
-	$va       = sscanf($time, "%2d:%2d:%2d");
-	$usertime = sprintf("%d:%02d", $va[0], $va[1]);
-	if ($va[2] != 0)
-		$usertime .= sprintf(":%02d", $va[2]);
-	return $usertime;
+function calc_fingerprint(string $pis): string
+{
+    return hash("sha256", $_SERVER['HTTP_USER_AGENT'] . $_SERVER['HTTP_ACCEPT'] . $pis);
 }
 
 #[Pure]
-function emptyval(mixed $fval): bool {
-	return empty($fval) ||
-	  $fval == "0000-00-00" ||
-	  $fval == "00:00:00" ||
-	  $fval == "00:00" ||
-	  $fval == "0000-00-00 00:00:00" ||
-	  is_numeric($fval) && $fval == 0.0;
+function date2user(string $db_datum, int $typ = 1): string
+{
+    if ($db_datum == "" || $db_datum == "0000-00-00" || strlen($db_datum) < 4) {
+        return "";
+    }
+    $year  = substr($db_datum, 0, 4);
+    $syear = substr($db_datum, 2, 2);
+    $month = substr($db_datum, 5, 2);
+    $day   = substr($db_datum, 8, 2);
+    switch ($typ) {
+        case 1:
+            return "$day.$month.$year";  // 03.07.2005
+        case 3:
+            return "$day.$month.$syear"; // 03.07.05
+        case 4:
+            return "$day.$month.";  // 03.07.
+        case 5:
+            $day   = (int) $day;        // 3.7.
+            $month = (int) $month;
+            return "$day.$month.";
+        case 6:
+            $day   = (int) $day;        // 3.7.2005
+            $month = (int) $month;
+            return "$day.$month.$year";
+        case 7:
+            $day   = (int) $day;        // 3.7.05
+            $month = (int) $month;
+            return "$day.$month.$syear";
+        default:
+            return "";
+    }
+}
+
+function time2user(string $time): string
+{
+    if ($time == "") {
+        return "";
+    }
+    $va       = sscanf($time, "%2d:%2d:%2d");
+    $usertime = sprintf("%d:%02d", $va[0], $va[1]);
+    if ($va[2] != 0) {
+        $usertime .= sprintf(":%02d", $va[2]);
+    }
+    return $usertime;
 }
 
 #[Pure]
-function utf8_enc(string $str): string {
-	return mb_convert_encoding($str, "UTF-8", "CP1252");
+function emptyval(mixed $fval): bool
+{
+    return empty($fval) ||
+      $fval == "0000-00-00" ||
+      $fval == "00:00:00" ||
+      $fval == "00:00" ||
+      $fval == "0000-00-00 00:00:00" ||
+      is_numeric($fval) && $fval == 0.0;
 }
