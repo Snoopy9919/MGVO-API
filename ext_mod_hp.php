@@ -73,7 +73,7 @@ class MgvoAPI
     private function log($comment, $lv, $dtyp)
     {
 
-        if ($dtyp && $this->debuglevel == 0) {
+        if ($dtyp & $this->debuglevel == 0) {
             return;
         }
 
