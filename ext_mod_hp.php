@@ -145,7 +145,7 @@ class MgvoAPI
         $this->log("Aus XML erzeugtes SimpleXMLElement", $xml, MGVO_DEBUG_XML);
 
         $objfieldlist = $xml->objfieldlist ?: "";//liste aller keys, die das object(array) haben sollte
-        $xmlObj       = $xml->{$objname} ?: null;
+        $xmlObj       = $xml->{$objname} ?: [];
 
         $fieldnames = explode(",", $objfieldlist);
         $resArr     = [];
