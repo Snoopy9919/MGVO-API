@@ -10,7 +10,7 @@ $vcryptkey = "f4jd8Nzhfr4f8tbhkHGZ765VGVujg";
 // Instanziierung der Klasse MGVO_SNIPLET
 // Der dritte Parameter sollte unbedingt im Produktivbetrieb auf 5 (Minuten) oder höher eingestellt werden.
 
-$sniplet_no = isset($_GET['sniplet_no']) && is_numeric($_GET['sniplet_no']) ? $_GET['sniplet_no'] : 11;
+$sniplet_no = isset($_GET['sniplet_no']) && is_numeric($_GET['sniplet_no']) ? $_GET['sniplet_no'] : 1;
 
 $msc = new MgvoSniplet($call_id, $vcryptkey, 0);
 
