@@ -1,6 +1,6 @@
 <?php
 
-namespace MGVO;
+require("../mgvo_sniplets.php");
 
 require '../vendor/autoload.php';
 // call_id zur Identifikation des Vereins (hier: Demoverein)

@@ -1,12 +1,14 @@
 <?php
 
-namespace MGVO;
+require_once("includes/ext_hlpfkt.php");
+require_once("includes/ext_cipher.php");
 
 const MGVO_DEBUG_ERR      = 0b1;         // Allg. Fehlerausgaben
 const MGVO_DEBUG_DATA     = 0b10;        // XML-Ergebnis vom Aufruf
 const MGVO_DEBUG_XML      = 0b100;         // Array nach XML-Konvertierung
 const MGVO_DEBUG_XMLTRANS = 0b1000;    // Schritte der XML-Konvertierung
 const MGVO_DEBUG_ERG      = 0b10000;        // Ergebnisarray vor Übergabe an Sniplet-Funktionen
+
 class MgvoAPI
 {
 

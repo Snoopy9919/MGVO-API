@@ -1,9 +1,5 @@
 <?php
 
-namespace MGVO;
-
-use UnexpectedValueException;
-
 const ENCRYPTIONMETHOD = 'AES-256-CBC';
 
 class Cipher

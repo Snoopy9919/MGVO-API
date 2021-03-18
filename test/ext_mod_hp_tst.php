@@ -1,9 +1,6 @@
 <?php
 
-namespace MGVO;
-
-require '../vendor/autoload.php';
-
+require("../ext_mod_hp.php");
 
 // MGVO_DEBUG_ERR | MGVO_DEBUG_DATA | MGVO_DEBUG_XML;
 

@@ -1,7 +1,5 @@
 <?php
 
-namespace MGVO;
-
 // Hilfsfunktionen
 /**
  * @param        $ipadr

@@ -1,6 +1,6 @@
 <?php
 
-namespace MGVO;
+require_once("mgvo_sniplets.php");
 
 class GenericMgvoSniplet extends MgvoSniplet
 {

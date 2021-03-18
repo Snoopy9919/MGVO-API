@@ -1,12 +1,10 @@
 <?php
 
-namespace MGVO;
-
 // In der Datei wird eine Sniplet-Klasse definiert, welche die Methoden der Klasse MGVO_HPAPI (ext_mod_hp.php)
 // aufruft und zu den jeweiligen Daten HTML-Code zur Ausgabe der Daten generiert.
 // Die Klasse repräsentiert Beispielcode und muss den individuellen Anforderungen angepasst werden.
 
-
+require_once("ext_mod_hp.php");
 
 class MgvoSniplet
 {
