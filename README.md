@@ -3,7 +3,7 @@ Homepage API for MGVO.
 
 See [Here](https://info.mgvo.de)
 
-##API
+## API
 
 [ext_mod_hp](ext_mod_hp.php)  
 Library for exchanging data from and to an MGVO account.
@@ -14,7 +14,7 @@ Library to generate HTML-Code out of the received data as a basic implementation
 [mgvo_generic_sniplets](mgvo_generic_sniplets.php)  
 Library to generate generic HTML-Code (extends normal mgvo_snipets.php)
 
-##Tests
+## Tests
 
 [test/ext_mod_hp_tst](test/ext_mod_hp_tst.php)  
 PHP program to test the MGVO API (class MGVO_HPAPI)
@@ -22,7 +22,7 @@ PHP program to test the MGVO API (class MGVO_HPAPI)
 [test/mgvo_sniplet_tst](test/mgvo_sniplets_tst.php)  
 PHP program to test the sniplet library (class MGVO_SNIPLET)
 
-##Includes
+## Includes
 
 [includes/ext_hlpfkt](includes/ext_hlpfkt.php)  
 Several PHP help functions
