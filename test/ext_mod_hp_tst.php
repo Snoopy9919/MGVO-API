@@ -1,32 +1,40 @@
 <?php
 
-   require("../ext_mod_hp.php");
-   
-   $mgvo_debug = 0; // MGVO_DEBUG_ERR | MGVO_DEBUG_DATA | MGVO_DEBUG_XML;
-   $glob_debug = 0;
-   
-   // call_id zur Identifikation des Vereins (hier: Demoverein)
-   $call_id = "9a052167eb8a71f51b686e35c18a665a";
-   // Symetrischer Schl¸ssel, muss identisch sein mit dem Schl¸ssel, der in den technischen Parametern abgelegt wird.
-   $vcryptkey = "f4jd8Nzhfr4f8tbhkHGZ765VGVujg";   
-   
-   echo "<html><body>"; 
+require("../ext_mod_hp.php");
 
-   // Instanziierung der Klasse MGVO_HPAPI
-   // Der dritte Parameter sollte unbedingt im Produktivbetrieb auf 5 (Minuten) oder hˆher eingestellt werden.
-   
-   $hp1 = new MGVO_HPAPI($call_id,$vcryptkey,0);
-   
-   $inar = array("nachname"=>"M¸ller-L¸denscheid","vorname"=>"Justin-Kevin","zahlweise"=>"j","zahlungsart"=>"l",
-                 "anrede"=>1,"geschlecht"=>"m","ort"=>"Berlin","plz"=>10365,"str"=>"Gernotstr. 12",
-                 "notiz"=>"Ganz netter Kerl\nmanchmal besoffen");
-   foreach($inar as $fn => $fv) $inar[$fn] = utf8_enc($fv);
-   
-   $retar = $hp1->create_mitstamm($inar);
-   print_ar($retar);
-   
-   if ($retar['errno'] == 0) echo "Mitglied $retar[1] angelegt<br>";
-   else echo "Fehler $retar[errno]: $retar[msg]<br>";
-   
-   echo "</body></html>";
-?>
+// MGVO_DEBUG_ERR | MGVO_DEBUG_DATA | MGVO_DEBUG_XML;
+
+
+// call_id zur Identifikation des Vereins (hier: Demoverein)
+$call_id = "9a052167eb8a71f51b686e35c18a665a";
+// Symetrischer Schl√ºssel, muss identisch sein mit dem Schl√ºssel, der in den technischen Parametern abgelegt wird.
+$vcryptkey = "f4jd8Nzhfr4f8tbhkHGZ765VGVujg";
+
+echo "<html lang='de'><body>";
+
+// Instanziierung der Klasse MGVO_HPAPI
+// Der dritte Parameter sollte unbedingt im Produktivbetrieb auf 5 (Minuten) oder h√∂her eingestellt werden.
+
+$hp1 = new MgvoAPI($call_id, $vcryptkey, 0);
+$hp1->setDebuglevel(MGVO_DEBUG_ERR | MGVO_DEBUG_DATA | MGVO_DEBUG_XML);
+
+$inar = [
+  "nachname"    => "Madaller-Ldenscheid",
+  "vorname"     => "Justin-Kevin",
+  "zahlweise"   => "j",
+  "zahlungsart" => "l",
+  "anrede"      => 1,
+  "geschlecht"  => "m",
+  "ort"         => "Berlin",
+  "plz"         => 10365000,
+  "str"         => "Gernotstr. 12",
+  "notiz"       => "Ganz netter Kerl\nmanchmal besoffen"];
+
+$retar = $hp1->createMitstamm($inar);
+if ($retar['errno'] == 0) {
+    echo "Mitglied $retar[msg] angelegt<br>";
+} else {
+    echo "Fehler $retar[errno]: $retar[msg]<br>";
+}
+
+echo "</body></html>";
